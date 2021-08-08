@@ -22,8 +22,12 @@ const productReducer = (state = initialState, action) => {
 				),
 			};
 		case UPDATE_PRODUCT:
-			const productIndex = initialState.userProducts.findIndex(elem=> elem.id === action.product.id)
-			const availableProductIndex = initialState.availableProducts.findIndex(elem=> elem.id === action.product.id)
+			const productIndex = initialState.userProducts.findIndex(
+				(elem) => elem.id === action.product.id
+			);
+			const availableProductIndex = initialState.availableProducts.findIndex(
+				(elem) => elem.id === action.product.id
+			);
 			const updatedProduct = new Product(
 				action.product.id,
 				"u1",
@@ -35,12 +39,28 @@ const productReducer = (state = initialState, action) => {
 			const userUpdatedProducts = [...state.userProducts];
 			userUpdatedProducts[productIndex] = updatedProduct;
 			const availableUpdatedProducts = [...state.availableProducts];
-			availableUpdatedProducts[availableProductIndex] = updatedProduct; 
+			availableUpdatedProducts[availableProductIndex] = updatedProduct;
 
 			return {
 				...state,
 				availableProducts: availableUpdatedProducts,
-				userProducts: userUpdatedProducts
+				userProducts: userUpdatedProducts,
+			};
+		case CREATE_PRODUCT:
+
+			const newProduct = new Product(
+				'p10',
+				"u1",
+				action.product.title,
+				action.product.imageUrl,
+				action.product.description,
+				parseFloat(action.product.price)
+			);
+
+			return {
+				...state,
+				availableProducts: state.availableProducts.concat(newProduct) ,
+				userProducts:state.userProducts.concat(newProduct),
 			};
 		default:
 			return state;

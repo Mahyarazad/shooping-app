@@ -11,6 +11,7 @@ import {
 } from "../../store/actions/cart";
 import { addOrder } from "../../store/actions/orders";
 import { StackActions } from "@react-navigation/native";
+import Card from '../../components/UI/Card';
 
 const CartScreen = (props) => {
 	const totalAmount = useSelector((state) => state.cart.totalAmount);
@@ -31,7 +32,7 @@ const CartScreen = (props) => {
 	const dispatch = useDispatch();
 	return (
 		<View>
-			<View style={styles.totalAmount}>
+			<Card style={styles.totalAmount}>
 				<Text style={styles.text}>
 					{" "}
 					Total: $<Text style={styles.price}>{totalAmount.toFixed(2)}</Text>
@@ -55,7 +56,7 @@ const CartScreen = (props) => {
 						Order Now
 					</Text>
 				</TouchableOpacity>
-			</View>
+			</Card>
 			<View>
 				<FlatList
 					data={item}
@@ -82,9 +83,7 @@ const CartScreen = (props) => {
 
 const styles = StyleSheet.create({
 	totalAmount: {
-		backgroundColor: "white",
-		borderRadius: 5,
-		elevation: 5,
+
 		marginHorizontal: 20,
 		marginVertical: 20,
 		paddingVertical: 10,

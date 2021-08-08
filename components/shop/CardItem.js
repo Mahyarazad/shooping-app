@@ -2,11 +2,12 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons, EvilIcons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
+import Card from "../UI/Card";
 
 const CartItem = (props) => {
 
 	return (
-		<View style={styles.itemContainer}>
+		<Card style={styles.itemContainer}>
 			<View style={styles.colOne}>
 				<Text style={styles.itemName}> {props.itemName} </Text>
 			</View>
@@ -28,15 +29,13 @@ const CartItem = (props) => {
                 </TouchableOpacity>
 			</View>
 			
-		</View>
+		</Card>
 	);
 };
 
 const styles = StyleSheet.create({
 	itemContainer: {
-		backgroundColor: "white",
-		borderRadius: 5,
-		elevation: 5,
+		
 		marginHorizontal: 20,
 		marginVertical: 2,
 		paddingVertical: 10,

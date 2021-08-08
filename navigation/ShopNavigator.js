@@ -58,7 +58,17 @@ const UserNavigator = () => {
 							<Item
 								iconName="edit"
 								iconSize={24}
-								onPress={() => navigation.navigate("edit-screen")}
+								onPress={() =>
+									navigation.navigate("edit-screen", 
+									{
+										item: {
+											product: {
+												submit: "",
+											},
+										},
+									}
+									)
+								}
 								iconColor="white"
 							/>
 						</HeaderButtons>
@@ -69,8 +79,8 @@ const UserNavigator = () => {
 				name="edit-screen"
 				component={EditProductScreen}
 				options={({ route, navigation }) => ({
-					title: 
-						typeof route.params === "undefined"
+					title:
+						route.params.item.product.submit === ""
 							? "New Product"
 							: route.params.item.product.title,
 					headerStyle: {

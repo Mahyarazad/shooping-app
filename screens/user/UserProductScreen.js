@@ -5,6 +5,7 @@ import {
 	View,
 	TouchableOpacity,
 	Text,
+	Alert,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -14,6 +15,17 @@ import { deleteProduct } from "../../store/actions/products";
 const UserProductScreen = (props) => {
 	const products = useSelector((state) => state.products.userProducts);
 	const dispatch = useDispatch();
+
+	const deleteHandler = (id) => {
+		Alert.alert("Are you sure?", "Do you really want to delete this product?", [
+			{ text: "No", style: "default" },
+			{
+				text: "Yes",
+				style: "destructive",
+				onPress: () => dispatch(deleteProduct(id)),
+			},
+		]);
+	};
 
 	return (
 		<FlatList
@@ -46,12 +58,7 @@ const UserProductScreen = (props) => {
 								<Text style={styles.buttonText}> Edit </Text>
 							</View>
 						</TouchableOpacity>
-						<TouchableOpacity
-							activeOpacity={0.7}
-							onPress={() => {
-								dispatch(deleteProduct(itemData.item.id));
-							}}
-						>
+						<TouchableOpacity activeOpacity={0.7} onPress={deleteHandler.bind(this, itemData.item.id)}>
 							<View style={styles.button}>
 								<Text style={styles.buttonText}> Delete </Text>
 							</View>

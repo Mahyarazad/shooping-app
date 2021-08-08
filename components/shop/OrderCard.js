@@ -2,13 +2,15 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Colors from "../../constants/Colors";
 import { useDispatch } from "react-redux";
-import {removeOrder} from '../../store/actions/orders'
+import {removeOrder} from '../../store/actions/orders';
+import Card from "../UI/Card";
+
 const OrderCard = (props) => {
 	const orderDetail = Object.values(props.orderItem.items);
 	const [showDetails, setShowDetails] = React.useState(false);
 	const dispatch = useDispatch();
 	return (
-		<View style={styles.itemContainer}>
+		<Card style={styles.itemContainer}>
 			<View style={styles.order}>
 				<Text style={styles.amount}>${props.orderItem.amount.toFixed(2)} </Text>
 				<Text style={styles.date}> {props.date}</Text>
@@ -60,15 +62,12 @@ const OrderCard = (props) => {
 					</View>
 				)}
 			</View>
-		</View>
+		</Card>
 	);
 };
 
 const styles = StyleSheet.create({
 	itemContainer: {
-		backgroundColor: "white",
-		borderRadius: 5,
-		elevation: 5,
 		marginHorizontal: 20,
 		marginVertical: 5,
 		paddingVertical: 10,

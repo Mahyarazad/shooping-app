@@ -9,14 +9,14 @@ import {
 } from "react-native";
 
 import { useDispatch } from "react-redux";
-import { updateProduct } from "../../store/actions/products";
+import { updateProduct, createProduct } from "../../store/actions/products";
 
 const EditProductScreen = (props) => {
 	const dispatch = useDispatch();
 
 	const editingProduct =
-		typeof props.route.params === "undefined"
-			? ""
+		props.route.params.item.product.submit === ""
+			? null
 			: props.route.params.item.product;
 
 	const [title, setTitle] = React.useState(
@@ -33,16 +33,28 @@ const EditProductScreen = (props) => {
 	);
 
 	const handelSubmit = React.useCallback(() => {
-		dispatch(
-			updateProduct({
-				price: +price,
-				title: title,
-				imageUrl: imageUrl,
-				description: description,
-				id: editingProduct?.id
-			})
-		);
-	}, [dispatch, title, price, imageUrl, description,editingProduct]);
+		if (editingProduct) {
+			dispatch(
+				updateProduct({
+					price: +price,
+					title: title,
+					imageUrl: imageUrl,
+					description: description,
+					id: editingProduct?.id,
+				})
+			);
+		} else {
+			dispatch(
+				createProduct({
+					price: +price,
+					title: title,
+					imageUrl: imageUrl,
+					description: description,
+				})
+			);
+		}
+		props.navigation.goBack();
+	}, [dispatch, title, price, imageUrl, description, editingProduct]);
 
 	React.useEffect(() => {
 		props.navigation.setParams({
@@ -68,10 +80,11 @@ const EditProductScreen = (props) => {
 						style={styles.input}
 						value={imageUrl}
 						onChangeText={(text) => setImageUrl(text)}
+						multiline={true}
 					/>
 				</View>
 				<View style={styles.row}>
-					<Text style={styles.text}>Price</Text>
+					<Text style={{...styles.text, color: 'red'}}>Price</Text>
 					<TextInput
 						style={styles.input}
 						value={price}
@@ -84,6 +97,7 @@ const EditProductScreen = (props) => {
 						style={styles.input}
 						value={description}
 						onChangeText={(text) => setDescription(text)}
+						multiline={true}
 					/>
 				</View>
 			</View>
@@ -102,7 +116,6 @@ const styles = StyleSheet.create({
 		fontFamily: "open-sans-bold",
 	},
 	input: {
-		// marginVertical: 10,
 		borderBottomColor: "gray",
 		borderBottomWidth: 1,
 		paddingTop: 4,
