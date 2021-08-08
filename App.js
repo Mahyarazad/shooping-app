@@ -1,21 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet } from "react-native";
+import { Provider } from "react-redux";
+import { createStore, combineReducers } from "redux";
+
+import Shop from "./navigation/ShopNavigator";
+import { useFonts } from "expo-font";
+import cartReducer from "./store/reducers/cart";
+import productReducer from "./store/reducers/products";
+import orderReducer from "./store/reducers/orders";
+import {composeWithDevTools} from 'redux-devtools-extension';
+
+const rootReducer = combineReducers({
+	products: productReducer,
+	cart: cartReducer,
+	order: orderReducer
+});
+
+const store = createStore(rootReducer, composeWithDevTools());
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+	const [loaded] = useFonts({
+		"open-sans": require("./constants/fonts/OpenSans-Regular.ttf"),
+		"open-sans-bold": require("./constants/fonts/OpenSans-Bold.ttf")
+	});
+
+	if (!loaded) {
+		return null;
+	}
+	return (
+		<Provider store={store}>
+			<Shop />
+		</Provider>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		justifyContent: "center",
+	},
 });
