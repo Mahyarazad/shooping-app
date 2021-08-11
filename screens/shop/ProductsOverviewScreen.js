@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
 	FlatList,
 	View,
@@ -6,7 +6,6 @@ import {
 	TouchableOpacity,
 	Text,
 	ActivityIndicator,
-	Animated,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -22,7 +21,7 @@ const ProductOverviewScreen = (props) => {
 	const [isLoading, setIsLoading] = React.useState(false);
 	const [isRefreshing, setIsRefreshing] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
-
+	const [purchaseMessage, setPurchaseMessage] = React.useState(false);
 
 	const loadProducts = React.useCallback(async () => {
 		setErrorMessage(null);
@@ -43,12 +42,23 @@ const ProductOverviewScreen = (props) => {
 
 	React.useEffect(() => {
 		setIsLoading(true);
-		loadProducts().then(()=>{
+		loadProducts().then(() => {
 			setIsLoading(false);
-		})
+		});
 	}, [dispatch, loadProducts]);
 
-	
+	const renderPurchaseMessage = React.useCallback(() => {
+		setPurchaseMessage(true);
+	},[purchaseMessage]);
+
+	React.useEffect(() => {
+		if (purchaseMessage) {
+			const Timer = setTimeout(() => {
+				setPurchaseMessage(false);
+			}, 1500);
+			return () => clearTimeout(Timer);
+		}
+	}, [renderPurchaseMessage]);
 
 	if (errorMessage) {
 		return (
@@ -65,9 +75,9 @@ const ProductOverviewScreen = (props) => {
 
 	if (isLoading) {
 		return (
-			<View style={styles.centered}>
+			<AnimatedView style={styles.centered}>
 				<ActivityIndicator size="large" color={Colors.primary} />
-			</View>
+			</AnimatedView>
 		);
 	}
 
@@ -78,71 +88,71 @@ const ProductOverviewScreen = (props) => {
 			</View>
 		);
 	}
-
+	console.log(purchaseMessage);
 	return (
-		<FlatList
-			data={products}
-			onRefresh={loadProducts}
-			refreshing={isRefreshing}
-			extraData={products}
-			renderItem={(itemData) => (
-				<ProductItem
-					imageSrc={itemData.item.imageUrl}
-					itemName={itemData.item.title}
-					itemPrice={itemData.item.price}
-					onSelect={() => {
-						props.navigation.navigate("product-detail", {
-							itemData: {
-								title: itemData.item.title,
-								product: itemData.item,
-							},
-						});
-					}}
-					addToCart={() => {
-						dispatch(cartAction.addToCart(itemData.item));
-					}}
-				>
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity
-							activeOpacity={0.7}
-							onPress={() => {
-								props.navigation.navigate("product-detail", {
-									itemData: {
-										title: itemData.item.title,
-										product: itemData.item,
-									},
-								});
-							}}
-						>
-							<View style={styles.button}>
-								<Text style={styles.buttonText}> View Details </Text>
-							</View>
-						</TouchableOpacity>
-						<TouchableOpacity
-							activeOpacity={0.7}
-							onPress={() => {
-								dispatch(
-									addToCart(itemData.item),
-								);
-							}}
-						>
-							<View style={styles.button}>
-								<Text style={styles.buttonText}> To Cart </Text>
-							</View>
-						</TouchableOpacity>
-					</View>
-					{/* {purchaseMessage ? (
-						<View>
-							<Text style={styles.purchaseMessage}> Added to cart </Text>
-						</View>
-					) : (
-						<></>
-					)} */}
-				</ProductItem>
+		<View>
+			{purchaseMessage ? (
+				<AnimatedView duration={300} style={{height: 30}}>
+					<Text style={styles.purchaseMessage}> Added to cart </Text>
+				</AnimatedView>
+			) : (
+				<></>
 			)}
+			<FlatList
+				data={products}
+				onRefresh={loadProducts}
+				refreshing={isRefreshing}
+				extraData={products}
+				renderItem={(itemData) => (
+					<ProductItem
+						imageSrc={itemData.item.imageUrl}
+						itemName={itemData.item.title}
+						itemPrice={itemData.item.price}
+						onSelect={() => {
+							props.navigation.navigate("product-detail", {
+								itemData: {
+									title: itemData.item.title,
+									product: itemData.item,
+								},
+							});
+						}}
+						addToCart={() => {
+							dispatch(cartAction.addToCart(itemData.item));
+						}}
+					>
+						<View style={styles.buttonContainer}>
+							<TouchableOpacity
+								activeOpacity={0.7}
+								onPress={() => {
+									props.navigation.navigate("product-detail", {
+										itemData: {
+											title: itemData.item.title,
+											product: itemData.item,
+										},
+									});
+								}}
+							>
+								<View style={styles.button}>
+									<Text style={styles.buttonText}> View Details </Text>
+								</View>
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.7}
+								onPress={() => {
+									dispatch(addToCart(itemData.item)), renderPurchaseMessage();
+								}}
+							>
+								<View style={styles.button}>
+									<Text style={styles.buttonText}> To Cart </Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+					</ProductItem>
+				)}
 
-			// numColumns={2}
-		/>
+				// numColumns={2}
+			/>
+		</View>
 	);
 };
 
@@ -173,8 +183,9 @@ const styles = StyleSheet.create({
 	},
 	purchaseMessage: {
 		fontFamily: "open-sans-bold",
-		color: "black",
-		fontSize: 16,
+		color: Colors.primary,
+		fontSize: 18,
+		textAlign: "center",
 	},
 });
 

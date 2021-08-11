@@ -2,11 +2,11 @@ import React from "react";
 import { View, Animated } from "react-native";
 
 const AnimatedView = (props) => {
-	const slideFromButton = React.useRef(new Animated.Value(30)).current;
+	const slideFromButton = React.useRef(new Animated.Value(-10)).current;
 	React.useEffect(() => {
 		Animated.timing(slideFromButton, {
-			toValue: -10,
-			duration: 500,
+			toValue: 3,
+			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 	}, [slideFromButton]);
@@ -16,6 +16,7 @@ const AnimatedView = (props) => {
 			style={{
 				...props.style,
 				transform: [{ translateY: slideFromButton }],
+
 			}}
 		>
 			{props.children}
