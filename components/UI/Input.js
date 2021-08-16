@@ -46,6 +46,7 @@ const Input = (props, ref) => {
 	}, [inputState, onInputChange, id]);
 
 	const handelInputChange = (text) => {
+
 		const emailRegex =
 			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		let isValid = true;
@@ -72,8 +73,8 @@ const Input = (props, ref) => {
 	};
 
 	return (
-		<View style={styles.row}>
-			<Text style={styles.text}>{props.label}</Text>
+		<View style={styles.screen, {...props.screen}}>
+			<Text style={styles.text, {...props.labelStyle}}>{props.label}</Text>
 			<TextInput
 				ref={ref}
 				{...props}
@@ -81,11 +82,10 @@ const Input = (props, ref) => {
 				onChangeText={handelInputChange}
 				value={inputState.value}
 				onBlur={handleFocusChange}
-                
 			/>
 			{!inputState.isValid && inputState.touched && (
 				<View style={styles.errorContainer}>
-					<Text style={styles.textError}> {props.inputError} </Text>
+					<Text style={styles.textError}> {props.errorMessage} </Text>
 				</View>
 			)}
 		</View>
@@ -93,7 +93,7 @@ const Input = (props, ref) => {
 };
 
 const styles = StyleSheet.create({
-	row: {
+	screen: {
 		marginVertical: 5,
 	},
 	text: {

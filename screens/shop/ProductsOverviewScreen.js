@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
 	FlatList,
 	View,
@@ -49,7 +49,7 @@ const ProductOverviewScreen = (props) => {
 
 	const renderPurchaseMessage = React.useCallback(() => {
 		setPurchaseMessage(true);
-	},[purchaseMessage]);
+	}, [purchaseMessage]);
 
 	React.useEffect(() => {
 		if (purchaseMessage) {
@@ -88,11 +88,11 @@ const ProductOverviewScreen = (props) => {
 			</View>
 		);
 	}
-	console.log(purchaseMessage);
+
 	return (
 		<View>
 			{purchaseMessage ? (
-				<AnimatedView duration={300} style={{height: 30}}>
+				<AnimatedView duration={300} style={{ height: 30, backgroundColor: 'white' }}>
 					<Text style={styles.purchaseMessage}> Added to cart </Text>
 				</AnimatedView>
 			) : (
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
 	},
 	purchaseMessage: {
 		fontFamily: "open-sans-bold",
-		color: Colors.primary,
+		color: "black",
 		fontSize: 18,
 		textAlign: "center",
 	},

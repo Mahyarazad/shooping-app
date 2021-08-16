@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useSelector } from "react-redux";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -16,16 +16,13 @@ import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
 import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
-import { useDispatch } from "react-redux";
-import { updateProduct } from "../store/actions/products";
+import AuthScreen from "../screens/user/AuthScreen";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
-
 const Drawer = createDrawerNavigator();
 
 const UserNavigator = () => {
-	const dispatch = useDispatch();
 	return (
 		<UserStack.Navigator
 			screenOptions={{
@@ -59,15 +56,13 @@ const UserNavigator = () => {
 								iconName="edit"
 								iconSize={24}
 								onPress={() =>
-									navigation.navigate("edit-screen", 
-									{
+									navigation.navigate("edit-screen", {
 										item: {
 											product: {
 												submit: "",
 											},
 										},
-									}
-									)
+									})
 								}
 								iconColor="white"
 							/>
@@ -179,6 +174,18 @@ const ShopNavigator = () => {
 };
 
 const Shop = () => {
+	const [isAuth, setIsAuth] = React.useState(false);
+	const token = useSelector(state => state.auth);
+
+	React.useEffect(() => {
+		if (token.registered !== "") {
+			setIsAuth(true);
+		}
+	}, [isAuth, token]);
+
+	if (!isAuth) {
+		return <AuthScreen />;
+	}
 	return (
 		<NavigationContainer>
 			<Drawer.Navigator

@@ -8,15 +8,39 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import Colors from "../../constants/Colors";
-import {useDispatch} from 'react-redux';
-import * as cartAction from '../../store/actions/cart';
-
+import { useDispatch } from "react-redux";
+import * as cartAction from "../../store/actions/cart";
+import AnimatedView from "../../components/UI/AnimatedView";
 const ProductDetailScreen = (props) => {
 	const dispatch = useDispatch();
 	const productItem = props.route.params.itemData;
+	const [purchaseMessage, setPurchaseMessage] = React.useState(false);
+
+	const renderPurchaseMessage = React.useCallback(() => {
+		setPurchaseMessage(true);
+	}, [purchaseMessage]);
+	console.log(purchaseMessage)
+	React.useEffect(() => {
+		if (purchaseMessage) {
+			const Timer = setTimeout(() => {
+				setPurchaseMessage(false);
+			}, 1500);
+			return () => clearTimeout(Timer);
+		}
+	}, [renderPurchaseMessage]);
 
 	return (
 		<ScrollView>
+			{purchaseMessage ? (
+				<AnimatedView
+					duration={300}
+					style={{ height: 40 }}
+				>
+					<Text style={styles.purchaseMessage}> Added to cart </Text>
+				</AnimatedView>
+			) : (
+				<></>
+			)}
 			<View style={styles.screen}>
 				<View style={styles.imageContainer}>
 					<Image
@@ -24,7 +48,12 @@ const ProductDetailScreen = (props) => {
 						source={{ uri: productItem.product.imageUrl }}
 					/>
 				</View>
-				<TouchableOpacity style={styles.button} onPress={() => dispatch(cartAction.addToCart(productItem.product))}>
+				<TouchableOpacity
+					style={styles.button}
+					onPress={() => {
+						dispatch(cartAction.addToCart(productItem.product)),
+						renderPurchaseMessage()}}
+				>
 					<Text style={styles.buttonText}> Add to Cart </Text>
 				</TouchableOpacity>
 				<View style={styles.detailContainer}>
@@ -35,6 +64,7 @@ const ProductDetailScreen = (props) => {
 					<Text style={styles.Item}> {productItem.product.description} </Text>
 				</View>
 			</View>
+			
 		</ScrollView>
 	);
 };
@@ -79,6 +109,12 @@ const styles = StyleSheet.create({
 		fontFamily: "open-sans",
 		fontSize: 16,
 		color: "white",
+	},
+	purchaseMessage: {
+		fontFamily: "open-sans-bold",
+		color: "black",
+		fontSize: 18,
+		textAlign: "center",
 	},
 });
 

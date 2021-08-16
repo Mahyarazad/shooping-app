@@ -7,7 +7,7 @@ import {
 	ScrollView,
 	ActivityIndicator,
 } from "react-native";
-import Card from "../../components/UI/Input";
+import Input from "../../components/UI/Input";
 import { useDispatch } from "react-redux";
 import { updateProduct, createProduct } from "../../store/actions/products";
 
@@ -139,10 +139,10 @@ const EditProductScreen = (props) => {
 		<KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
 			<ScrollView>
 				<View style={styles.screen}>
-					<Card
+					<Input
 						id="title"
 						label="Title"
-						inputError="Please enter a valid title!"
+						errorMessage="Please enter a valid title!"
 						autoCapitalize="words"
 						returnKeyType="next"
 						onInputChange={textChangeHandler}
@@ -154,12 +154,12 @@ const EditProductScreen = (props) => {
 						required
 					/>
 
-					<Card
+					<Input
 						id="imageUrl"
 						ref={ref_input1}
 						onSubmitEditing={() => ref_input2.current.focus()}
 						label="Image Url"
-						inputError="Please enter a valid image URL!"
+						errorMessage="Please enter a valid image URL!"
 						autoCapitalize="words"
 						returnKeyType="next"
 						onInputChange={textChangeHandler}
@@ -167,12 +167,12 @@ const EditProductScreen = (props) => {
 						initialValid={!!editingProduct}
 						required
 					/>
-					<Card
+					<Input
 						ref={ref_input2}
 						onSubmitEditing={() => ref_input3.current.focus()}
 						id="price"
 						label="Price"
-						inputError="Please enter a valid price!"
+						errorMessage="Please enter a valid price!"
 						autoCapitalize="words"
 						returnKeyType="next"
 						keyboardType="decimal-pad"
@@ -182,11 +182,11 @@ const EditProductScreen = (props) => {
 						required
 						min={1}
 					/>
-					<Card
+					<Input
 						ref={ref_input3}
 						id="description"
 						label="Description"
-						inputError="Please enter a valid description!"
+						errorMessage="Please enter a valid description!"
 						autoCapitalize="words"
 						returnKeyType="next"
 						onInputChange={textChangeHandler}
