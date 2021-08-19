@@ -104,9 +104,10 @@ const EditProductScreen = (props) => {
 			props.navigation.navigate("user-product");
 		} catch (err) {
 			setErrorMessage(err.message)
+			setIsLoading(false);
 		}
 
-		setIsLoading(false);
+		
 	}, [dispatch, formState, editingProduct]);
 
 	React.useEffect(() => {

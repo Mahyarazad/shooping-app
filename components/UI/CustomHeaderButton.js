@@ -5,8 +5,10 @@ import {
 	AntDesign,
 	SimpleLineIcons,
 	Feather,
+	Entypo,
 } from "@expo/vector-icons";
 import React from "react";
+
 const CustomHeaderButton = (props) => {
 	const iconLib = () => {
 		switch (props.iconName) {
@@ -22,6 +24,8 @@ const CustomHeaderButton = (props) => {
 				return Feather;
 			case "edit":
 				return Feather;
+			case "log-out":
+				return Entypo;
 			default:
 				return Ionicons;
 		}

@@ -15,9 +15,11 @@ const initialState = {
 const productReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case SET_PRODUCT:
+
 			return {
 				availableProducts: action.product,
-				userProducts: action.product.filter(elem => elem.ownerId ==='u1')
+				userProducts: action.product
+				// userProducts: action.product.filter(elem => elem.ownerId === ??)
 			}
 		case DELETE_PRODUCT:
 			return {
@@ -35,7 +37,7 @@ const productReducer = (state = initialState, action) => {
 			);
 			const updatedProduct = new Product(
 				action.product.id,
-				"u1",
+				action.product.ownerId,
 				action.product.title,
 				action.product.imageUrl,
 				action.product.description,
@@ -52,9 +54,10 @@ const productReducer = (state = initialState, action) => {
 				userProducts: userUpdatedProducts,
 			};
 		case CREATE_PRODUCT:
+			
 			const newProduct = new Product(
 				action.product.id,
-				"u1",
+				action.product.ownerId,
 				action.product.title,
 				action.product.imageUrl,
 				action.product.description,

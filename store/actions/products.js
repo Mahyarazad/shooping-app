@@ -4,13 +4,15 @@ export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const SET_PRODUCT = "SET_PRODUCT";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const fetchProducts = () => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		const userId = getState().auth.localId;
 		try {
 			//async function goes here
 			const response = await fetch(
-				"https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json"
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json`
 			);
 
 			if (!response.ok) {
@@ -23,7 +25,7 @@ export const fetchProducts = () => {
 				loadedData.push(
 					new Product(
 						key,
-						"u1",
+						userId,
 						resData[key].title,
 						resData[key].imageUrl,
 						resData[key].description,
@@ -39,9 +41,23 @@ export const fetchProducts = () => {
 };
 
 export const deleteProduct = (productId) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
 		await fetch(
-			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${productId}.json`,
+			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${productId}.json?auth=${token}`,
 			{
 				method: "DELETE",
 			}
@@ -51,18 +67,33 @@ export const deleteProduct = (productId) => {
 };
 
 export const updateProduct = (product) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
+
 		try {
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${product.id}.jon`,
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${product.id}.json?auth=${token}`,
 				{
 					method: "PATCH",
 					headers: { "content-type": "application/json" },
 					body: JSON.stringify(product),
 				}
 			);
-			if(!response.ok){
-				throw new Error('Something went wrong!')
+			if (!response.ok) {
+				throw new Error("Something went wrong!");
 			}
 			return dispatch({ type: UPDATE_PRODUCT, product });
 		} catch (err) {
@@ -72,24 +103,41 @@ export const updateProduct = (product) => {
 };
 
 export const createProduct = (product) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
+		const userId = getState().auth.localId;
 		// async function goes here
 		try {
 			const response = await fetch(
-				"https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json",
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`,
 				{
 					method: "POST",
 					headers: { "content-type": "application/json" },
-					body: JSON.stringify(product),
+					body: JSON.stringify({ ...product, ownerId: userId }),
 				}
 			);
 			if (!response.ok) {
+				const error = await response.json();
+				console.log(error);
 				throw new Error("Something went wrong!");
 			}
 			const resData = await response.json();
 			return dispatch({
 				type: CREATE_PRODUCT,
-				product: { ...product, id: resData.name },
+				product: { ...product, id: resData.name, ownerId: userId },
 			});
 		} catch (err) {
 			throw err;

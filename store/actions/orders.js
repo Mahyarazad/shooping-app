@@ -2,13 +2,29 @@ import Order from "../../models/orderItem";
 export const ADD_ORDER = "ADD_ORDER";
 export const REMOVE_ORDER = "REMOVE_ORDER";
 export const SET_ORDER = "SER_ORDER";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const addOrder = (cartItem, totalAmount) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				throw new Error(err.message)
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
+		const userId = getState().auth.localId;
 		try {
 			const date = new Date();
 			const response = await fetch(
-				"https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/u1.json",
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}.json?auth=${token}`,
 				{
 					method: "POST",
 					headers: { "content-type": "aplication/json" },
@@ -28,7 +44,7 @@ export const addOrder = (cartItem, totalAmount) => {
 					items: { ...cartItem },
 					amount: totalAmount,
 					id: resData.name,
-					date: date
+					date: date,
 				},
 			});
 		} catch (err) {
@@ -38,11 +54,26 @@ export const addOrder = (cartItem, totalAmount) => {
 };
 
 export const removeOrder = (orderId) => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
+		const userId = getState().auth.localId;
 		await fetch(
-			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/u1/${orderId}.json`,
+			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}/${orderId}.json?auth=${token}`,
 			{
-				method: "DELETE"
+				method: "DELETE",
 			}
 		);
 
@@ -54,9 +85,10 @@ export const removeOrder = (orderId) => {
 };
 
 export const fetchOrders = () => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		const userId = getState().auth.localId;
 		const response = await fetch(
-			"https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/u1.json"
+			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}.json`
 		);
 
 		const resData = await response.json();

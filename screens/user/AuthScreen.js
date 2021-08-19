@@ -12,10 +12,13 @@ import Input from "../../components/UI/Input";
 import Card from "../../components/UI/Card";
 import CustomButton from "../../components/UI/CustomButton";
 import Colors from "../../constants/Colors";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as authAction from "../../store/actions/auth";
+import LandingScreen from "../LandScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UPDATE_FORM_INPUT = "UPDATE_FORM_INPUT";
+
 const formInputReducer = (state, action) => {
 	if (action.type === UPDATE_FORM_INPUT) {
 		const updatedValues = {
@@ -42,6 +45,7 @@ const formInputReducer = (state, action) => {
 const AuthScreen = (props) => {
 	const inputRef = React.useRef();
 	const dispatch = useDispatch();
+	const [loggedIn, setLoggedIn] = React.useState(false);
 	const [disableButton, setDisableButton] = React.useState(false);
 	const [logState, setLogState] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
@@ -90,17 +94,32 @@ const AuthScreen = (props) => {
 			}
 		} catch (err) {
 			setErrorMessage(err.message);
+			setErrorMessage("");
+			setDisableButton(false);
 		}
-		setErrorMessage("");
-		setDisableButton(false);
-	}, [disableButton, errorMessage,logState ,dispatch]);
+	}, [disableButton, errorMessage, logState, authState, dispatch]);
+
+	const redirect = React.useCallback(async () => {
+		try {
+			const value = await AsyncStorage.getItem("@storage_Key");
+			if (value === null) {
+				setLoggedIn(true);
+			}
+		} catch (err) {
+			throw new Error(err.message);
+		}
+	}, [AsyncStorage, loggedIn]);
 
 	React.useEffect(() => {
 		if (errorMessage) {
 			Alert.alert("An error occured!", errorMessage, [{ text: "OK" }]);
 		}
-	}, [errorMessage]);
+		redirect();
+	}, [errorMessage, redirect]);
 
+	if (!loggedIn) {
+		return <LandingScreen />;
+	}
 	return (
 		<KeyboardAvoidingView
 			// behavior="padding"
@@ -162,6 +181,7 @@ const AuthScreen = (props) => {
 							onPress={() => {
 								setLogState((prevState) => !prevState);
 							}}
+							disabled={disableButton}
 						/>
 					</View>
 				</Card>

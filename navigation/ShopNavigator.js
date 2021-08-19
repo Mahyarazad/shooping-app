@@ -1,5 +1,7 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { Alert } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import * as authActions from "../store/actions/auth";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -14,9 +16,12 @@ import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
+import LandingScreen from "../screens/LandScreen";
+import DrawerContent from "./DrawerContent";
 import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import AuthScreen from "../screens/user/AuthScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
@@ -174,18 +179,24 @@ const ShopNavigator = () => {
 };
 
 const Shop = () => {
-	const [isAuth, setIsAuth] = React.useState(false);
-	const token = useSelector(state => state.auth);
+	const authData = useSelector((state) => state.auth.auth);
+	const dispatch = useDispatch();
+
+	const autoLogin = React.useCallback(() => {
+		dispatch(authActions.isLoggedIn());
+	}, [dispatch]);
 
 	React.useEffect(() => {
-		if (token.registered !== "") {
-			setIsAuth(true);
+		autoLogin();
+		if (authData) {
+			dispatch(authActions.authenticate());
 		}
-	}, [isAuth, token]);
+	}, [authData, dispatch, autoLogin]);
 
-	if (!isAuth) {
+	if (!authData) {
 		return <AuthScreen />;
 	}
+
 	return (
 		<NavigationContainer>
 			<Drawer.Navigator
@@ -205,22 +216,13 @@ const Shop = () => {
 					drawerActiveTintColor: Colors.primary,
 					drawerActiveBackgroundColor: "white",
 				}}
+				drawerContent={(props) => <DrawerContent {...props} />}
 			>
 				<Drawer.Screen
 					name="Products"
 					component={ShopNavigator}
 					options={({ route, navigate }) => ({
 						headerShown: false,
-						drawerIcon: ({ focused, size }) => (
-							<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-								<Item
-									title="Admin-drawer"
-									iconColor={Colors.primary}
-									iconName="cart"
-									iconSize={24}
-								/>
-							</HeaderButtons>
-						),
 					})}
 				/>
 				<Drawer.Screen
@@ -228,16 +230,6 @@ const Shop = () => {
 					component={OrdersScreen}
 					options={({ route, navigate }) => ({
 						headerShown: true,
-						drawerIcon: ({ focused, size }) => (
-							<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-								<Item
-									title="product"
-									iconColor={Colors.primary}
-									iconName="receipt"
-									iconSize={24}
-								/>
-							</HeaderButtons>
-						),
 					})}
 				/>
 				<Drawer.Screen
@@ -245,16 +237,6 @@ const Shop = () => {
 					component={UserNavigator}
 					options={({ route, navigate }) => ({
 						headerShown: false,
-						drawerIcon: ({ focused, size }) => (
-							<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-								<Item
-									title="Admin-drawer"
-									iconColor={Colors.primary}
-									iconName="note"
-									iconSize={24}
-								/>
-							</HeaderButtons>
-						),
 					})}
 				/>
 			</Drawer.Navigator>
