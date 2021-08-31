@@ -19,11 +19,11 @@ const ProductDetailScreen = (props) => {
 	const renderPurchaseMessage = React.useCallback(() => {
 		setPurchaseMessage(true);
 	}, [purchaseMessage]);
-	console.log(purchaseMessage)
+	 
 	React.useEffect(() => {
 		if (purchaseMessage) {
 			const Timer = setTimeout(() => {
-				setPurchaseMessage(false);
+				renderPurchaseMessage
 			}, 1500);
 			return () => clearTimeout(Timer);
 		}
