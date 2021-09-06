@@ -7,15 +7,18 @@ import {
 	Text,
 	ActivityIndicator,
 	Alert,
+	ImageBackground,
+	TouchableOpacity,
+	Dimensions,
 } from "react-native";
 import Input from "../../components/UI/Input";
-import Card from "../../components/UI/Card";
 import CustomButton from "../../components/UI/CustomButton";
 import Colors from "../../constants/Colors";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as authAction from "../../store/actions/auth";
 import LandingScreen from "../LandScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 
 const UPDATE_FORM_INPUT = "UPDATE_FORM_INPUT";
 
@@ -49,6 +52,7 @@ const AuthScreen = (props) => {
 	const [disableButton, setDisableButton] = React.useState(false);
 	const [logState, setLogState] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
+	const [passwordVisible, setPasswordVisible] = React.useState(true);
 
 	const [authState, fromDispatch] = React.useReducer(formInputReducer, {
 		inputValues: {
@@ -121,53 +125,76 @@ const AuthScreen = (props) => {
 		return <LandingScreen />;
 	}
 	return (
-		<KeyboardAvoidingView
-			// behavior="padding"
-			// keyboardVerticalOffset={-100}
-			style={{ backgroundColor: "pink", flex: 1 }}
-		>
+		<View style={{ backgroundColor: "white", flex: 1 }}>
 			<View style={styles.header}>
 				<Text style={styles.headerText}> Authenticate</Text>
 			</View>
-			<ScrollView>
-				<Card style={styles.screen}>
-					<Input
-						labelStyle={{ fontSize: 17, fontFamily: "open-sans-bold" }}
-						screen={{ width: "80%" }}
-						label="E-mail"
-						id="email"
-						keyboardType="email-address"
-						required
-						email
-						onInputChange={inputChangeHandler}
-						initialValue={authState.email}
-						textContentType="username"
-						autoCapitalize="none"
-						onSubmitEditing={() => {
-							inputRef.current.focus();
-						}}
-						returnKeyType="next"
-						errorMessage="Please type a correct E-mail address."
-					/>
-					<Input
-						labelStyle={{ fontSize: 17, fontFamily: "open-sans-bold" }}
-						screen={{ width: "80%" }}
-						ref={inputRef}
-						label="Password"
-						id="password"
-						keyboardType="default"
-						secureTextEntry={true}
-						required
-						onInputChange={inputChangeHandler}
-						initialValue={authState.password}
-						errorMessage="Minimun length should be six letters"
-					/>
+			<ImageBackground
+				resizeMode="cover"
+				style={{ width: "100%", height: "100%"}}
+				imageStyle={{ opacity: 0.3 }}
+				source={require('../../assets/14256015.jpg')}
+			>
+				<ScrollView style={{ marginTop: 150  }}>
+					<View style={styles.fieldContainer}>
+						<AntDesign style={{paddingLeft:5}} name="user" size={24} color="gray" />
+						<Input
+							input={styles.textInput}
+							placeholder="Email"
+							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
+							screen={{ width: "80%" }}
+							id="email"
+							keyboardType="email-address"
+							required
+							email
+							onInputChange={inputChangeHandler}
+							initialValue={authState.email}
+							textContentType="username"
+							autoCapitalize="none"
+							onSubmitEditing={() => {
+								inputRef.current.focus();
+							}}
+							returnKeyType="next"
+							errorContainer={ styles.errorContainer }
+							errorMessage="Minimun length should be six letters"
+						/>
+					</View>
+
+					<View style={styles.fieldContainer}>
+						<AntDesign style={{paddingLeft:5}} name="lock" size={24} color="gray" />
+						<Input
+							placeholder="Password"
+							input={styles.textInput}
+							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
+							screen={{ width: "80%" }}
+							ref={inputRef}
+							id="password"
+							keyboardType="default"
+							secureTextEntry={passwordVisible}
+							required
+							onInputChange={inputChangeHandler}
+							initialValue={authState.password}
+							errorContainer={ styles.errorContainer }
+							errorMessage="Minimun length should be six letters"
+						/>
+						<TouchableOpacity
+							onPress={() => setPasswordVisible((prevState) => !prevState)}
+						>
+							<Entypo
+								
+								name={passwordVisible ? "eye" : "eye-with-line"}
+								size={24}
+								color="#fc036b"
+							/>
+						</TouchableOpacity>
+					</View>
+
 					<View style={styles.buttonContainer}>
 						{disableButton ? (
-							<ActivityIndicator size="small" color="gray" />
+							<ActivityIndicator size="large" color="white" />
 						) : (
 							<CustomButton
-								buttonStyle={styles.buttonStyle}
+								buttonStyle={{ backgroundColor: "#fc036b" ,...styles.buttonStyle }}
 								textStyle={styles.textStyleLogin}
 								text={logState ? "Sign-up " : "Login"}
 								onPress={logHandler}
@@ -175,7 +202,7 @@ const AuthScreen = (props) => {
 							/>
 						)}
 						<CustomButton
-							buttonStyle={styles.buttonStyle}
+							buttonStyle={{ backgroundColor: "white", borderColor: "#fc036b", borderWidth:1  ,...styles.buttonStyle }}
 							textStyle={styles.textStyle}
 							text={logState ? "I have a user" : "Don't have user, sign-up"}
 							onPress={() => {
@@ -184,9 +211,9 @@ const AuthScreen = (props) => {
 							disabled={disableButton}
 						/>
 					</View>
-				</Card>
-			</ScrollView>
-		</KeyboardAvoidingView>
+				</ScrollView>
+			</ImageBackground>
+		</View>
 	);
 };
 
@@ -216,21 +243,42 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	buttonContainer: {
-		width: "100%",
+		flex: 1,
 		alignItems: "center",
-		paddingHorizontal: 30,
+		paddingHorizontal: 20,
 		paddingVertical: 20,
 	},
 	buttonStyle: {
+		width:Dimensions.get("screen").width - 40,
+		maxWidth:Dimensions.get("screen").width,
 		paddingVertical: 10,
+		marginVertical: 2,
 	},
 	textStyle: {
 		fontSize: 18,
-		color: "black",
+		color: "#fc036b",
+		textAlign: "center",
 	},
+
 	textStyleLogin: {
 		fontSize: 18,
+		textAlign: "center",
+		color: "white",
 	},
+	fieldContainer: {
+		marginHorizontal: 20,
+		height:70,
+		flexDirection: "row",
+		alignItems: "center",
+		borderRadius: 5,
+		borderColor: "white",
+		marginVertical: 10,
+		backgroundColor: "white",
+		elevation: 20,
+	},
+	// textInput: { borderWidth: 0, paddingTop: 0, paddingLeft: 10, paddingBottom: 0,marginBottom:17 },
+	textInput: { height:50, paddingLeft:10 },
+	errorContainer:{ height:50, paddingLeft:10}
 });
 
 export default AuthScreen;

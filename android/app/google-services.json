@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "485395790123",
+    "firebase_url": "https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shop-app-c577e",
+    "storage_bucket": "shop-app-c577e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:485395790123:android:63f1111c4c73b457e9ad6e",
+        "android_client_info": {
+          "package_name": "com.freelance.shoppingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "485395790123-q97fc9skjiums5d7ghvr1f6cqqqc397h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.freelance.shoppingapp",
+            "certificate_hash": "411912653b84292fb0dfad20c331bd3a7e297f4b"
+          }
+        },
+        {
+          "client_id": "485395790123-u1e4hl8d406i1cmaahs61f1cb56k0n4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-N90HVFr7yift7vJkAQUZV6l4a4lHddI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "485395790123-u1e4hl8d406i1cmaahs61f1cb56k0n4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

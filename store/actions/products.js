@@ -9,12 +9,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const fetchProducts = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
+		const token = getState().auth.idToken;
 		try {
 			//async function goes here
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json`
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`
 			);
-
+			
 			if (!response.ok) {
 				throw new Error("Something went wrong!");
 			}
@@ -35,7 +36,7 @@ export const fetchProducts = () => {
 			}
 			return dispatch({ type: SET_PRODUCT, product: loadedData });
 		} catch (err) {
-			throw err;
+			console.log(err)
 		}
 	};
 };

@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import axios from "axios";
 export const SIGN_UP = "SIGN_UP";
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";
 export const AUTHENTICATE = "AUTHENTICATE";
 export const ISLOGGEDIN = "ISLOGGEDIN";
+import env from "../../ENV";
 
 const storeData = async (comingData) => {
 	try {
@@ -18,7 +19,7 @@ const storeData = async (comingData) => {
 export const signUp = (email, password) => {
 	return async (dispatch) => {
 		const response = await fetch(
-			"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDBzYjPMMeI94kScNnZN9_XEQMalP1iJGI",
+			`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${env.APIKey}`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -29,6 +30,7 @@ export const signUp = (email, password) => {
 				}),
 			}
 		);
+
 		if (!response.ok) {
 			const errResponse = await response.json();
 
@@ -58,44 +60,73 @@ export const signUp = (email, password) => {
 
 export const login = (email, password) => {
 	return async (dispatch) => {
-		const response = await fetch(
-			"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDBzYjPMMeI94kScNnZN9_XEQMalP1iJGI",
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					email: email,
-					password: password,
-					returnSecureToken: true,
-				}),
-			}
-		);
-		if (!response.ok) {
-			const errResponse = await response.json();
-			const errorId = errResponse.error.message;
-			const messageHandler = (id) => {
-				switch (id) {
-					case "INVALID_PASSWORD":
-						return "Incorrect Password";
-					case "EMAIL_NOT_FOUND":
-						return "There is no user record corresponding to this identifier. The user may have been deleted.";
-					case "USER_DISABLED":
-						return "The user account has been disabled by an administrator.";
-				}
-			};
-			throw new Error(messageHandler(errorId));
+		try {
+			const request = {};
+			console.log(request);
+			const response = await fetch(
+				"https://express-react-server398.herokuapp.com/signup",
+				{  
+					method: 'post',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify({
+					  "email" : email,
+					  "password" : password,
+					  returnSecureToken: true,
+					}),
+				})
+			const resData = await response.json();
+			console.log(resData);
+		} catch (err) {
+			console.log(err);
 		}
-		const resData = await response.json();
-		dispatch({ type: LOGIN, resData: resData });
-
-		const { localId, idToken, expiresIn } = resData;
-		dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
-		const expirationDate = new Date(
-			new Date().getTime() + parseInt(expiresIn) * 1000
-		);
-		storeData({ localId, idToken, expirationDate, email: resData.email });
 	};
 };
+
+// 	try {
+// 		const response = await fetch(
+// 			`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.APIKey}`,
+// 			{
+// 				method: "POST",
+// 				headers: { "Content-Type": "application/json" },
+// 				body: JSON.stringify({
+// 					email: email,
+// 					password: password,
+// 					returnSecureToken: true,
+// 				}),
+// 			}
+// 		);
+
+// 		if (!response.ok) {
+// 			const errResponse = await response.json();
+// 			console.log(errResponse)
+// 			const errorId = errResponse.error.message;
+// 			const messageHandler = (id) => {
+// 				switch (id) {
+// 					case "INVALID_EMAIL":
+// 						return "The email address is already in use by another account.";
+// 					case "OPERATION_NOT_ALLOWED":
+// 						return "Password sign-in is disabled for this project.";
+// 					case "TOO_MANY_ATTEMPTS_TRY_LATER":
+// 						return "We have blocked all requests from this device due to unusual activity. Try again later.";
+// 				}
+// 			};
+// 			throw new Error(messageHandler(errorId));
+// 		}
+// 		const resData = await response.json();
+// 		dispatch({ type: LOGIN, resData: resData });
+
+// 		const { localId, idToken, expiresIn } = resData;
+// 		dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
+// 		const expirationDate = new Date(
+// 			new Date().getTime() + parseInt(expiresIn) * 1000
+// 		);
+// 		storeData({ localId, idToken, expirationDate, email: resData.email });
+// 	} catch (err) {
+// 		console.log(err);
+// 		console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+// 	}
+// };
+// };
 
 export const authenticate = () => {
 	return { type: AUTHENTICATE };

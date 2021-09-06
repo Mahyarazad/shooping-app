@@ -11,10 +11,11 @@ import productReducer from "./store/reducers/products";
 import orderReducer from "./store/reducers/orders";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
+import { StatusBar } from 'expo-status-bar';
 
-LogBox.ignoreLogs([
-	"Non-serializable values were found in the navigation state",
-]);
+// LogBox.ignoreLogs([
+// 	"Non-serializable values were found in the navigation state",
+// ]);
 
 const rootReducer = combineReducers({
 	products: productReducer,
@@ -37,6 +38,7 @@ export default function App() {
 	return (
 		<Provider store={store}>
 			<Shop />
+			<StatusBar style='auto'/>
 		</Provider>
 	);
 }
