@@ -14,14 +14,12 @@ import Colors from "../../constants/Colors";
 import { deleteProduct } from "../../store/actions/products";
 import * as productActions from "../../store/actions/products";
 
-
 const UserProductScreen = (props) => {
 	const products = useSelector((state) => state.products.userProducts);
 	const dispatch = useDispatch();
 
 	const [isLoading, setIsLoading] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
-
 
 	const loadProducts = React.useCallback(async () => {
 		setErrorMessage(null);
@@ -37,17 +35,14 @@ const UserProductScreen = (props) => {
 
 	React.useEffect(() => {
 		const refetchProducts = props.navigation.addListener("focus", loadProducts);
-		return refetchProducts;
-		// return () => {
-		// 	refetchProducts.remove();
-		// };
+		return () => {
+			refetchProducts
+		};
 	}, [loadProducts]);
 
 	React.useEffect(() => {
 		loadProducts();
 	}, [dispatch, loadProducts]);
-
-
 
 	const deleteHandler = (id) => {
 		Alert.alert("Are you sure?", "Do you really want to delete this product?", [
@@ -157,7 +152,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: Colors.primary,
 		fontSize: 16,
-	}
+	},
 });
 
 export default UserProductScreen;

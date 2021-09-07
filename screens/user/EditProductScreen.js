@@ -103,11 +103,9 @@ const EditProductScreen = (props) => {
 			}
 			props.navigation.navigate("user-product");
 		} catch (err) {
-			setErrorMessage(err.message)
+			setErrorMessage(err.message);
 			setIsLoading(false);
 		}
-
-		
 	}, [dispatch, formState, editingProduct]);
 
 	React.useEffect(() => {
@@ -141,6 +139,11 @@ const EditProductScreen = (props) => {
 			<ScrollView>
 				<View style={styles.screen}>
 					<Input
+						input={{
+							borderBottomColor: "gray",
+							borderBottomWidth: 1,
+							paddingTop: 4,
+						}}
 						id="title"
 						label="Title"
 						errorMessage="Please enter a valid title!"
@@ -156,6 +159,11 @@ const EditProductScreen = (props) => {
 					/>
 
 					<Input
+						input={{
+							borderBottomColor: "gray",
+							borderBottomWidth: 1,
+							paddingTop: 4,
+						}}
 						id="imageUrl"
 						ref={ref_input1}
 						onSubmitEditing={() => ref_input2.current.focus()}
@@ -169,6 +177,11 @@ const EditProductScreen = (props) => {
 						required
 					/>
 					<Input
+						input={{
+							borderBottomColor: "gray",
+							borderBottomWidth: 1,
+							paddingTop: 4,
+						}}
 						ref={ref_input2}
 						onSubmitEditing={() => ref_input3.current.focus()}
 						id="price"
@@ -184,6 +197,11 @@ const EditProductScreen = (props) => {
 						min={1}
 					/>
 					<Input
+						input={{
+							borderBottomColor: "gray",
+							borderBottomWidth: 1,
+							paddingTop: 4,
+						}}
 						ref={ref_input3}
 						id="description"
 						label="Description"

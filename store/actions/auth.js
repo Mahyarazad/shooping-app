@@ -36,6 +36,7 @@ export const signUp = (email, password) => {
 
 			const errorId = errResponse.error.message;
 			const messageHandler = (id) => {
+				
 				switch (id) {
 					case "INVALID_EMAIL":
 						return "The email address is already in use by another account.";
@@ -61,72 +62,49 @@ export const signUp = (email, password) => {
 export const login = (email, password) => {
 	return async (dispatch) => {
 		try {
-			const request = {};
-			console.log(request);
 			const response = await fetch(
-				"https://express-react-server398.herokuapp.com/signup",
-				{  
-					method: 'post',
-					headers: {'Content-Type': 'application/json'},
+				`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.APIKey}`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
-					  "email" : email,
-					  "password" : password,
-					  returnSecureToken: true,
+						email: email,
+						password: password,
+						returnSecureToken: true,
 					}),
-				})
+				}
+			);
+
+			if (!response.ok) {
+				const errResponse = await response.json();
+				console.log(errResponse);
+				const errorId = errResponse.error.message;
+				const messageHandler = (id) => {
+					switch (id) {
+						case "INVALID_EMAIL":
+							return "The email address is already in use by another account.";
+						case "OPERATION_NOT_ALLOWED":
+							return "Password sign-in is disabled for this project.";
+						case "TOO_MANY_ATTEMPTS_TRY_LATER":
+							return "We have blocked all requests from this device due to unusual activity. Try again later.";
+					}
+				};
+				throw new Error(messageHandler(errorId));
+			}
 			const resData = await response.json();
-			console.log(resData);
+			dispatch({ type: LOGIN, resData: resData });
+
+			const { localId, idToken, expiresIn } = resData;
+			dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
+			const expirationDate = new Date(
+				new Date().getTime() + parseInt(expiresIn) * 1000
+			);
+			storeData({ localId, idToken, expirationDate, email: resData.email });
 		} catch (err) {
-			console.log(err);
+			throw new Error(err.message);
 		}
 	};
 };
-
-// 	try {
-// 		const response = await fetch(
-// 			`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.APIKey}`,
-// 			{
-// 				method: "POST",
-// 				headers: { "Content-Type": "application/json" },
-// 				body: JSON.stringify({
-// 					email: email,
-// 					password: password,
-// 					returnSecureToken: true,
-// 				}),
-// 			}
-// 		);
-
-// 		if (!response.ok) {
-// 			const errResponse = await response.json();
-// 			console.log(errResponse)
-// 			const errorId = errResponse.error.message;
-// 			const messageHandler = (id) => {
-// 				switch (id) {
-// 					case "INVALID_EMAIL":
-// 						return "The email address is already in use by another account.";
-// 					case "OPERATION_NOT_ALLOWED":
-// 						return "Password sign-in is disabled for this project.";
-// 					case "TOO_MANY_ATTEMPTS_TRY_LATER":
-// 						return "We have blocked all requests from this device due to unusual activity. Try again later.";
-// 				}
-// 			};
-// 			throw new Error(messageHandler(errorId));
-// 		}
-// 		const resData = await response.json();
-// 		dispatch({ type: LOGIN, resData: resData });
-
-// 		const { localId, idToken, expiresIn } = resData;
-// 		dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
-// 		const expirationDate = new Date(
-// 			new Date().getTime() + parseInt(expiresIn) * 1000
-// 		);
-// 		storeData({ localId, idToken, expirationDate, email: resData.email });
-// 	} catch (err) {
-// 		console.log(err);
-// 		console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
-// 	}
-// };
-// };
 
 export const authenticate = () => {
 	return { type: AUTHENTICATE };

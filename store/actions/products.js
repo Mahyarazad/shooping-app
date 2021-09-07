@@ -10,17 +10,19 @@ export const fetchProducts = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
 		const token = getState().auth.idToken;
+		
 		try {
 			//async function goes here
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`
+				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`,
 			);
 			
 			if (!response.ok) {
+				const err = await response;
+				// console.log(err)
 				throw new Error("Something went wrong!");
 			}
 			const resData = await response.json();
-
 			const loadedData = [];
 			for (const key in resData) {
 				loadedData.push(
@@ -30,13 +32,14 @@ export const fetchProducts = () => {
 						resData[key].title,
 						resData[key].imageUrl,
 						resData[key].description,
-						resData[key].price
+						+resData[key].price
 					)
 				);
 			}
 			return dispatch({ type: SET_PRODUCT, product: loadedData });
 		} catch (err) {
 			console.log(err)
+			throw new Error(err.message);
 		}
 	};
 };
