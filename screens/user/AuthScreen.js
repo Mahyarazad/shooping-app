@@ -24,19 +24,6 @@ import CheckBox from "@react-native-community/checkbox";
 
 const UPDATE_FORM_INPUT = "UPDATE_FORM_INPUT";
 
-const loadRememberMe = async () => {
-	try {
-		const email = await FileSystem.readAsStringAsync(
-			FileSystem.cacheDirectory + "remember-me.txt",
-			{ encoding: FileSystem.EncodingType.UTF8 }
-		);
-
-		return email;
-	} catch (err) {
-		return err;
-	}
-};
-
 const formInputReducer = (state, action) => {
 	if (action.type === UPDATE_FORM_INPUT) {
 		const updatedValues = {
@@ -68,7 +55,7 @@ const AuthScreen = (props) => {
 	const [logState, setLogState] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
 	const [passwordVisible, setPasswordVisible] = React.useState(true);
-	const [rememberMe, setRememberMe] = React.useState(false);
+	const [rememberMe, setRememberMe] = React.useState(null);
 
 	const [authState, fromDispatch] = React.useReducer(formInputReducer, {
 		inputValues: {
@@ -130,65 +117,64 @@ const AuthScreen = (props) => {
 		}
 	}, [AsyncStorage, loggedIn]);
 
-	const handleRememberMe = React.useCallback(async () => {
-		if(rememberMe){
-			try {
-				const done = await FileSystem.writeAsStringAsync(
-					FileSystem.cacheDirectory + "remember-me.txt",
-					`${authState.inputValues.email}`,
-					{ encoding: FileSystem.EncodingType.UTF8 }
-				);
-			} catch (err) {
-				throw new Error(err);
+	const fetchRememberMe = React.useCallback(async () => {
+		try {
+			const email = await FileSystem.readAsStringAsync(
+				FileSystem.cacheDirectory + "remember-me.txt",
+				{ encoding: FileSystem.EncodingType.UTF8 }
+			);
+			if (email) {
+				setRememberMe(true);
 			}
-		} else {
-			try {
-				const done = await FileSystem.deleteAsync(
-					FileSystem.cacheDirectory + "remember-me.txt",
-				);
-			} catch (err) {
-				throw new Error(err);
-			}
+			return email;
+		} catch (err) {
+			return
 		}
-		
-	}, [authState,rememberMe]);
+	}, [rememberMe]);
+
+	const deleteRememberMe = React.useCallback(async () => {
+		try {
+			await FileSystem.deleteAsync(
+				FileSystem.cacheDirectory + "remember-me.txt"
+			);
+		} catch (err) {
+			throw new Error(err);
+		}
+	}, [rememberMe]);
+
+	const handleRememberMe = React.useCallback(async () => {
+		try {
+			await FileSystem.writeAsStringAsync(
+				FileSystem.cacheDirectory + "remember-me.txt",
+				`${authState.inputValues.email}`,
+				{ encoding: FileSystem.EncodingType.UTF8 }
+			);
+
+		} catch (err) {
+			throw new Error(err);
+		}
+	}, [authState, rememberMe]);
 
 	const handleLoadRememberMe = React.useCallback(async () => {
 		try {
-			const res = await loadRememberMe();
+			const res = await fetchRememberMe();
 			if (res) {
-				setRememberMe(true);
-				authState.email = res
+				console.log(res);
+				authState.email = res;
 			}
 		} catch (err) {
 			throw new Error(err);
 		}
-	}, [fromDispatch, rememberMe, loadRememberMe, inputChangeHandler]);
+	}, [fromDispatch, rememberMe, inputChangeHandler]);
 
 	React.useEffect(() => {
-		if (rememberMe) {
-			handleRememberMe();
-		}
+		handleLoadRememberMe();
 
 		if (errorMessage) {
 			Alert.alert("An error occured!", errorMessage, [{ text: "OK" }]);
 		}
 		redirect();
-	}, [
-		errorMessage,
-		redirect,
-		rememberMe,
-		handleRememberMe,
-		handleLoadRememberMe,
-	]);
-
-	React.useEffect(() => {
-		handleLoadRememberMe();
-
-		return () => {
-			handleLoadRememberMe();
-		};
-	}, [handleLoadRememberMe, inputChangeHandler]);
+	}, [errorMessage, redirect, rememberMe, handleLoadRememberMe]);
 
 	if (!loggedIn) {
 		return <LandingScreen />;
@@ -278,7 +264,17 @@ const AuthScreen = (props) => {
 						<CheckBox
 							disabled={false}
 							value={rememberMe}
-							onValueChange={() => setRememberMe((prevState) => !prevState)}
+							onValueChange={() =>
+								setRememberMe((prevState) => {
+									if (prevState) {
+										deleteRememberMe();
+									}
+									if (!prevState) {
+										handleRememberMe();
+									}
+									!prevState;
+								})
+							}
 							tintColors={{ true: Colors.primary }}
 						/>
 					</View>
