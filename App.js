@@ -13,6 +13,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
 import { StatusBar } from 'expo-status-bar';
 
+
 // LogBox.ignoreLogs([
 // 	"Non-serializable values were found in the navigation state",
 // ]);
@@ -27,9 +28,10 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
+
 	const [loaded] = useFonts({
-		"open-sans": require("./constants/fonts/OpenSans-Regular.ttf"),
-		"open-sans-bold": require("./constants/fonts/OpenSans-Bold.ttf"),
+		"open-sans": require("./constants/fonts/Glory-Light.ttf"),
+		"open-sans-bold": require("./constants/fonts/Glory-Bold.ttf"),
 	});
 
 	if (!loaded) {

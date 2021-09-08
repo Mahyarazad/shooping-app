@@ -1,12 +1,12 @@
 import React from "react";
-import { Alert } from "react-native";
+
 import { useSelector, useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
 	createDrawerNavigator,
-	DrawerItemList,
+	
 } from "@react-navigation/drawer";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
@@ -21,11 +21,44 @@ import DrawerContent from "./DrawerContent";
 import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import AuthScreen from "../screens/user/AuthScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import ResetPassword from "../screens/user/ResetPassword";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+
+const AuthNavigator = () => {
+	return (
+		<AuthStack.Navigator>
+			<AuthStack.Screen
+				name="auth-screen"
+				component={AuthScreen}
+				options={({ navigation, route }) => ({
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: Colors.primary,
+						
+					},
+					title: "Authenticate",
+					headerTintColor: 'white'
+				})}
+			/>
+			<AuthStack.Screen
+				name="reset-password"
+				component={ResetPassword}
+				options={({ navigation, route }) => ({
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: Colors.primary,
+					},
+					title: "Reset Password",
+					headerTintColor: 'white'
+				})}
+			/>
+		</AuthStack.Navigator>
+	);
+};
 
 const UserNavigator = () => {
 	return (
@@ -193,53 +226,57 @@ const Shop = () => {
 		}
 	}, [authData, dispatch, autoLogin]);
 
-	if (!authData) {
-		return <AuthScreen />;
-	}
+	// if (!authData) {
+	// 	return;
+	// }
 
 	return (
 		<NavigationContainer>
-			<Drawer.Navigator
-				screenOptions={{
-					drawerStyle: {
-						backgroundColor: "white",
-						width: 240,
-						height: "90%",
-						marginVertical: "20%",
-					},
-					drawerLabelStyle: {
-						fontSize: 18,
-						marginVertical: 0,
-						fontFamily: "open-sans",
-						color: "black",
-					},
-					drawerActiveTintColor: Colors.primary,
-					drawerActiveBackgroundColor: "white",
-				}}
-				drawerContent={(props) => <DrawerContent {...props} />}
-			>
-				<Drawer.Screen
-					name="Products"
-					component={ShopNavigator}
-					options={({ route, navigate }) => ({
-						headerShown: false,
-					})}
-				/>
-				<Drawer.Screen
-					name="Orders"
-					component={OrdersScreen}
-					options={({ route, navigate }) => ({
-						headerShown: true,
-					})}
-				/>
-				<Drawer.Screen
-					name="Admin"
-					component={UserNavigator}
-					options={({ route, navigate }) => ({
-						headerShown: false,
-					})}
-				/>
-			</Drawer.Navigator>
+			{!authData ? (
+				<AuthNavigator />
+			) : (
+				<Drawer.Navigator
+					screenOptions={{
+						drawerStyle: {
+							backgroundColor: "white",
+							width: 240,
+							height: "90%",
+							marginVertical: "20%",
+						},
+						drawerLabelStyle: {
+							fontSize: 18,
+							marginVertical: 0,
+							fontFamily: "open-sans",
+							color: "black",
+						},
+						drawerActiveTintColor: Colors.primary,
+						drawerActiveBackgroundColor: "white",
+					}}
+					drawerContent={(props) => <DrawerContent {...props} />}
+				>
+					<Drawer.Screen
+						name="Products"
+						component={ShopNavigator}
+						options={({ route, navigate }) => ({
+							headerShown: false,
+						})}
+					/>
+					<Drawer.Screen
+						name="Orders"
+						component={OrdersScreen}
+						options={({ route, navigate }) => ({
+							headerShown: true,
+						})}
+					/>
+					<Drawer.Screen
+						name="Admin"
+						component={UserNavigator}
+						options={({ route, navigate }) => ({
+							headerShown: false,
+						})}
+					/>
+				</Drawer.Navigator>
+			)}
 		</NavigationContainer>
 	);
 };

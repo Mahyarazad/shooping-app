@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
 		borderBottomColor: "gray",
 		borderBottomWidth: 1,
 		paddingTop: 4,
+		width: '100%'
 	},
     errorContainer:{
         marginVertical: 5,

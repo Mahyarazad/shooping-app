@@ -19,7 +19,7 @@ const storeData = async (comingData) => {
 export const signUp = (email, password) => {
 	return async (dispatch) => {
 		const response = await fetch(
-			`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${env.APIKey}`,
+			`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${env.apiKey}`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ export const login = (email, password) => {
 	return async (dispatch) => {
 		try {
 			const response = await fetch(
-				`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.APIKey}`,
+				`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${env.apiKey}`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },

@@ -5,7 +5,7 @@ export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const SET_PRODUCT = "SET_PRODUCT";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import ENV from "../../ENV";
 export const fetchProducts = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
@@ -14,7 +14,7 @@ export const fetchProducts = () => {
 		try {
 			//async function goes here
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`,
+				`${ENV.databaseURL}product.json?auth=${token}`,
 			);
 			
 			if (!response.ok) {
@@ -61,7 +61,7 @@ export const deleteProduct = (productId) => {
 			token = idToken;
 		}
 		await fetch(
-			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${productId}.json?auth=${token}`,
+			`${ENV.databaseURL}product/${productId}.json?auth=${token}`,
 			{
 				method: "DELETE",
 			}
@@ -89,7 +89,7 @@ export const updateProduct = (product) => {
 
 		try {
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product/${product.id}.json?auth=${token}`,
+				`${ENV.databaseURL}product/${product.id}.json?auth=${token}`,
 				{
 					method: "PATCH",
 					headers: { "content-type": "application/json" },
@@ -126,7 +126,7 @@ export const createProduct = (product) => {
 		// async function goes here
 		try {
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/product.json?auth=${token}`,
+				`${ENV.databaseURL}product.json?auth=${token}`,
 				{
 					method: "POST",
 					headers: { "content-type": "application/json" },

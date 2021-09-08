@@ -18,7 +18,7 @@ import { useDispatch } from "react-redux";
 import * as authAction from "../../store/actions/auth";
 import LandingScreen from "../LandScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, Fontisto } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import CheckBox from "@react-native-community/checkbox";
 
@@ -128,7 +128,7 @@ const AuthScreen = (props) => {
 			}
 			return email;
 		} catch (err) {
-			return
+			return;
 		}
 	}, [rememberMe]);
 
@@ -149,7 +149,6 @@ const AuthScreen = (props) => {
 				`${authState.inputValues.email}`,
 				{ encoding: FileSystem.EncodingType.UTF8 }
 			);
-
 		} catch (err) {
 			throw new Error(err);
 		}
@@ -159,7 +158,6 @@ const AuthScreen = (props) => {
 		try {
 			const res = await fetchRememberMe();
 			if (res) {
-				console.log(res);
 				authState.email = res;
 			}
 		} catch (err) {
@@ -181,24 +179,21 @@ const AuthScreen = (props) => {
 	}
 	return (
 		<KeyboardAvoidingView style={{ backgroundColor: "white", flex: 1 }}>
-			<View style={styles.header}>
-				<Text style={styles.headerText}> Authenticate</Text>
-			</View>
 			<ImageBackground
 				resizeMode="cover"
 				style={{
 					width: "100%",
-					height: Dimensions.get("window").height * 1.2,
+					height: "110%",
 					position: "absolute",
 				}}
-				imageStyle={{ opacity: 0.3 }}
-				source={require("../../assets/14256015.jpg")}
+				imageStyle={{ opacity: 0.3,transform: [{translateY: -100}] }}
+				source={require("../../assets/auth-screen.png")}
 			>
 				<ScrollView style={{ marginTop: 150 }}>
 					<View style={styles.fieldContainer}>
-						<AntDesign
-							style={{ paddingLeft: 5 }}
-							name="user"
+						<Fontisto
+							style={{ paddingLeft: 15 }}
+							name="email"
 							size={24}
 							color="gray"
 						/>
@@ -206,7 +201,7 @@ const AuthScreen = (props) => {
 							input={styles.textInput}
 							placeholder="Email"
 							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
-							screen={{ width: "80%" }}
+							screen={{ width: "85%" }}
 							id="email"
 							keyboardType="email-address"
 							required
@@ -220,13 +215,13 @@ const AuthScreen = (props) => {
 							}}
 							returnKeyType="next"
 							errorContainer={styles.errorContainer}
-							errorMessage="Minimun length should be six letters"
+							errorMessage="Please enter a valid email address"
 						/>
 					</View>
 
 					<View style={styles.fieldContainer}>
 						<AntDesign
-							style={{ paddingLeft: 5 }}
+							style={{ paddingLeft: 15 }}
 							name="lock"
 							size={24}
 							color="gray"
@@ -235,7 +230,7 @@ const AuthScreen = (props) => {
 							placeholder="Password"
 							input={styles.textInput}
 							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
-							screen={{ width: "80%" }}
+							screen={{ width: "85%" }}
 							ref={inputRef}
 							id="password"
 							keyboardType="default"
@@ -246,37 +241,49 @@ const AuthScreen = (props) => {
 							errorContainer={styles.errorContainer}
 							errorMessage="Minimun length should be six letters"
 						/>
-						<TouchableOpacity
-							onPress={() => setPasswordVisible((prevState) => !prevState)}
-						>
-							<Entypo
-								name={passwordVisible ? "eye" : "eye-with-line"}
-								size={24}
-								color="#fc036b"
-							/>
-						</TouchableOpacity>
+						<View style={{ transform: [{ translateX: -27 }], }}>
+							<TouchableOpacity
+								onPress={() => setPasswordVisible((prevState) => !prevState)}
+							>
+								<Entypo
+									name={passwordVisible ? "eye" : "eye-with-line"}
+									size={24}
+									color="#fc036b"
+								/>
+							</TouchableOpacity>
+						</View>
 					</View>
 					<View style={styles.checkBox}>
-						<Text style={{ fontFamily: "open-sans", fontSize: 16 }}>
-							{" "}
-							Remember Me{" "}
-						</Text>
 						<CheckBox
 							disabled={false}
 							value={rememberMe}
 							onValueChange={() =>
 								setRememberMe((prevState) => {
-									if (prevState) {
+									if (prevState && authState.inputValues.email.length !== 0) {
 										deleteRememberMe();
 									}
-									if (!prevState) {
+									if (!prevState && authState.inputValues.email.length !== 0) {
 										handleRememberMe();
-									}
-									!prevState;
+									} return !prevState;
+									
 								})
 							}
 							tintColors={{ true: Colors.primary }}
 						/>
+						<Text style={{ fontFamily: "open-sans", fontSize: 16 }}>
+							{" "}
+							Remember Me{" "}
+						</Text>
+
+						<View style={{ marginLeft: 125 }}>
+							<CustomButton
+								buttonStyle={{
+									backgroundColor: "transparent",
+								}}
+								text="Forget Password"
+								onPress={() => props.navigation.navigate("reset-password")}
+							/>
+						</View>
 					</View>
 
 					<View style={styles.buttonContainer}>
@@ -289,7 +296,7 @@ const AuthScreen = (props) => {
 									...styles.buttonStyle,
 								}}
 								textStyle={styles.textStyleLogin}
-								text={logState ? "Sign-up " : "Login"}
+								text={logState ? "SIGN-UP " : "LOGIN"}
 								onPress={logHandler}
 								disabled={disableButton}
 							/>
@@ -327,13 +334,6 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		backgroundColor: "white",
 	},
-	header: {
-		height: 80,
-		backgroundColor: Colors.primary,
-		justifyContent: "center",
-		alignItems: "center",
-		zIndex: 2,
-	},
 	headerText: {
 		textAlign: "center",
 		fontFamily: "open-sans",
@@ -353,6 +353,7 @@ const styles = StyleSheet.create({
 		maxWidth: Dimensions.get("screen").width,
 		paddingVertical: 10,
 		marginVertical: 2,
+		borderRadius:10
 	},
 	textStyle: {
 		fontSize: 18,
@@ -367,12 +368,12 @@ const styles = StyleSheet.create({
 	},
 	fieldContainer: {
 		marginHorizontal: 20,
-		height: 70,
+		height: 60,
 		flexDirection: "row",
 		alignItems: "center",
-		borderRadius: 5,
+		borderRadius: 10,
 		borderColor: "white",
-		marginVertical: 10,
+		marginVertical: 5,
 		backgroundColor: "white",
 		elevation: 20,
 	},
@@ -380,7 +381,10 @@ const styles = StyleSheet.create({
 	textInput: {
 		marginLeft: 10,
 		position: "absolute",
-		transform: [{ translateY: -15 }],
+		width:'100%',
+		height: 55,
+		transform: [{ translateY: -27 }],
+		fontFamily: 'open-sans'
 	},
 	errorContainer: {
 		marginLeft: 10,
@@ -388,7 +392,7 @@ const styles = StyleSheet.create({
 		transform: [{ translateY: +10 }],
 	},
 	checkBox: {
-		paddingLeft: 20,
+		marginHorizontal: 20,
 		flexDirection: "row",
 		justifyContent: "flex-start",
 		alignItems: "center",
