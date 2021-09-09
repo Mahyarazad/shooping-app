@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: Colors.primary,
 		fontSize: 16,
+		fontFamily: "open-sans",
 	},
 	emptyScreen: {
 		fontFamily: "open-sans",

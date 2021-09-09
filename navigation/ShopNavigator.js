@@ -4,10 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-	createDrawerNavigator,
-	
-} from "@react-navigation/drawer";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import ProductOverviewScreen from "../screens/shop/ProductsOverviewScreen";
@@ -22,6 +19,8 @@ import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import AuthScreen from "../screens/user/AuthScreen";
 import ResetPassword from "../screens/user/ResetPassword";
+import LogoTitle from "./LogoTitle";
+import Header from "./Header";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
@@ -30,7 +29,15 @@ const Drawer = createDrawerNavigator();
 
 const AuthNavigator = () => {
 	return (
-		<AuthStack.Navigator>
+		<AuthStack.Navigator
+			screenOptions={() => ({
+				header: ({ navigation, route, options, back }) => {
+					return (
+						<Header navigation={navigation} options={options} back={back} />
+					);
+				},
+			})}
+		>
 			<AuthStack.Screen
 				name="auth-screen"
 				component={AuthScreen}
@@ -38,10 +45,8 @@ const AuthNavigator = () => {
 					headerShown: true,
 					headerStyle: {
 						backgroundColor: Colors.primary,
-						
 					},
-					title: "Authenticate",
-					headerTintColor: 'white'
+					headerTitle: (props) => <LogoTitle {...props} title="Authenticate" />,
 				})}
 			/>
 			<AuthStack.Screen
@@ -49,11 +54,10 @@ const AuthNavigator = () => {
 				component={ResetPassword}
 				options={({ navigation, route }) => ({
 					headerShown: true,
-					headerStyle: {
-						backgroundColor: Colors.primary,
-					},
-					title: "Reset Password",
-					headerTintColor: 'white'
+					headerStyle: { backgroundColor: Colors.primary },
+					headerTitle: (props) => (
+						<LogoTitle {...props} title="Reset Password" />
+					),
 				})}
 			/>
 		</AuthStack.Navigator>
@@ -63,9 +67,13 @@ const AuthNavigator = () => {
 const UserNavigator = () => {
 	return (
 		<UserStack.Navigator
-			screenOptions={{
-				headerShown: true,
-			}}
+			screenOptions={() => ({
+				header: ({ navigation, route, options, back }) => {
+					return (
+						<Header navigation={navigation} options={options} back={back} />
+					);
+				},
+			})}
 		>
 			<UserStack.Screen
 				name="user-product"
@@ -73,10 +81,12 @@ const UserNavigator = () => {
 				options={({ navigation }) => ({
 					headerShown: true,
 					headerStyle: {
-						backgroundColor: Colors.primary,
+						backgroundColor: "Colors.primary",
 					},
-					headerTintColor: "white",
-					title: "Admin",
+
+					headerTitle: (props) => (
+						<LogoTitle {...props} title="Customization" />
+					),
 					headerLeft: ({ focused, size }) => (
 						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 							<Item
@@ -112,14 +122,19 @@ const UserNavigator = () => {
 				name="edit-screen"
 				component={EditProductScreen}
 				options={({ route, navigation }) => ({
-					title:
-						route.params.item.product.submit === ""
-							? "New Product"
-							: route.params.item.product.title,
 					headerStyle: {
 						backgroundColor: Colors.primary,
 					},
-					headerTintColor: "white",
+					headerTitle: (props) => (
+						<LogoTitle
+							{...props}
+							title={
+								route.params.item.product.submit === ""
+									? "New Product"
+									: route.params.item.product.title
+							}
+						/>
+					),
 					headerRight: () => (
 						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 							<Item
@@ -139,19 +154,24 @@ const UserNavigator = () => {
 const ShopNavigator = () => {
 	return (
 		<ShopStack.Navigator
-			screenOptions={{
-				headerShown: true,
-			}}
+			screenOptions={() => ({
+				header: ({ navigation, route, options, back }) => {
+					return (<Header navigation={navigation} options={options} back={back}/>)
+					
+				}
+			})}
 		>
 			<ShopStack.Screen
 				name="Product Overview"
 				component={ProductOverviewScreen}
 				options={({ route, navigation }) => ({
-					headerShown: true,
 					headerStyle: {
 						backgroundColor: Colors.primary,
 					},
-					headerTintColor: "white",
+
+					headerTitle: (props) => (
+						<LogoTitle {...props} title="Product Overview" />
+					),
 					headerLeft: ({ focused, size }) => (
 						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 							<Item
@@ -163,7 +183,6 @@ const ShopNavigator = () => {
 							/>
 						</HeaderButtons>
 					),
-
 					headerRight: () => (
 						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 							<Item
@@ -180,27 +199,27 @@ const ShopNavigator = () => {
 			<ShopStack.Screen
 				name="product-detail"
 				component={ProductDetailScreen}
-				options={({ route, navigation }) => ({
-					title: route.params.itemData.title,
+				options={({ route }) => ({
 					headerStyle: {
 						backgroundColor: Colors.primary,
 					},
-					headerTintColor: "white",
+					headerTitle: () => <LogoTitle title={route.params.itemData.title} />,
 				})}
 			/>
 			<ShopStack.Screen
 				name="CartScreen"
 				component={CartScreen}
 				options={({ route, navigation }) => ({
-					title: "Cart",
+					headerStyle: { backgroundColor: Colors.primary },
+					headerTitle: (props) => <LogoTitle {...props} title="Cart" />,
 					headerRight: () => (
 						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 							<Item
-								iconName="caret-back-circle"
-								iconColor={Colors.primary}
-								iconSize={40}
+								iconName="export"
+								iconColor="white"
+								iconSize={24}
 								onPress={() => {
-									navigation.goBack();
+									navigation.navigate("Orders");
 								}}
 							></Item>
 						</HeaderButtons>
@@ -217,18 +236,15 @@ const Shop = () => {
 
 	const autoLogin = React.useCallback(() => {
 		dispatch(authActions.isLoggedIn());
-	}, [dispatch]);
+	}, [dispatch, authActions]);
 
 	React.useEffect(() => {
 		autoLogin();
 		if (authData) {
 			dispatch(authActions.authenticate());
 		}
+		return () => {};
 	}, [authData, dispatch, autoLogin]);
-
-	// if (!authData) {
-	// 	return;
-	// }
 
 	return (
 		<NavigationContainer>
@@ -257,15 +273,30 @@ const Shop = () => {
 					<Drawer.Screen
 						name="Products"
 						component={ShopNavigator}
-						options={({ route, navigate }) => ({
+						options={({ route, navigation }) => ({
 							headerShown: false,
+							headerStyle: {
+								fontFamily: "open-sans",
+							},
 						})}
 					/>
 					<Drawer.Screen
 						name="Orders"
 						component={OrdersScreen}
-						options={({ route, navigate }) => ({
-							headerShown: true,
+						options={({ route, navigation }) => ({
+							headerTitleStyle: { fontFamily: "open-sans" },
+							headerRight: () => (
+								<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+									<Item
+										style={{ marginRight: 15 }}
+										title="cart"
+										iconColor={Colors.primary}
+										iconName="cart"
+										iconSize={24}
+										onPress={() => navigation.navigate("CartScreen")}
+									/>
+								</HeaderButtons>
+							),
 						})}
 					/>
 					<Drawer.Screen
@@ -273,6 +304,7 @@ const Shop = () => {
 						component={UserNavigator}
 						options={({ route, navigate }) => ({
 							headerShown: false,
+							headerTitleStyle: { fontFamily: "open-sans" },
 						})}
 					/>
 				</Drawer.Navigator>

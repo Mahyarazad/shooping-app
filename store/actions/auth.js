@@ -77,7 +77,6 @@ export const login = (email, password) => {
 
 			if (!response.ok) {
 				const errResponse = await response.json();
-				console.log(errResponse);
 				const errorId = errResponse.error.message;
 				const messageHandler = (id) => {
 					switch (id) {

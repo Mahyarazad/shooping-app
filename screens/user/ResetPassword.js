@@ -8,7 +8,6 @@ import {
 	Linking,
 	Modal,
 	Text,
-	Image,
 	KeyboardAvoidingView,
 } from "react-native";
 import CustomButton from "../../components/UI/CustomButton";
@@ -17,6 +16,7 @@ import { Fontisto } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import firebase from "firebase";
 import ENV from "../../ENV";
+
 
 if (!firebase.apps.length) {
 	firebase.initializeApp(ENV);
@@ -90,12 +90,13 @@ const ResetPassword = (props) => {
 			<ImageBackground
 				style={{
 					width: "100%",
-					height: Dimensions.get("window").height * 1.2,
+					height: "100%",
 					position: "absolute",
 				}}
-				source={require("../../assets/auth-screen.png")}
+				//thanks to "Videezy.com" for this awesome animation
+				source={require("../../assets/Grey.png")}
 				resizeMode="cover"
-				imageStyle={{ opacity: 0.3 }}
+				imageStyle={{ opacity: 0.7 }}
 			>
 				{modalStatus && (
 					<View style={styles.centerView}>

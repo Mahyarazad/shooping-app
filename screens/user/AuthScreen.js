@@ -178,17 +178,19 @@ const AuthScreen = (props) => {
 		return <LandingScreen />;
 	}
 	return (
-		<KeyboardAvoidingView style={{ backgroundColor: "white", flex: 1 }}>
+		<KeyboardAvoidingView style={{ flex: 1 }}>
 			<ImageBackground
 				resizeMode="cover"
 				style={{
 					width: "100%",
-					height: "110%",
+					height: "100%",
 					position: "absolute",
 				}}
-				imageStyle={{ opacity: 0.3,transform: [{translateY: -100}] }}
-				source={require("../../assets/auth-screen.png")}
+				imageStyle={{ opacity: 0.5}}
+				//thanks to "Videezy.com" for this awesome animation
+				source={require("../../assets/Grey.png")}
 			>
+
 				<ScrollView style={{ marginTop: 150 }}>
 					<View style={styles.fieldContainer}>
 						<Fontisto
@@ -241,7 +243,7 @@ const AuthScreen = (props) => {
 							errorContainer={styles.errorContainer}
 							errorMessage="Minimun length should be six letters"
 						/>
-						<View style={{ transform: [{ translateX: -27 }], }}>
+						<View style={{ transform: [{ translateX: -27 }] }}>
 							<TouchableOpacity
 								onPress={() => setPasswordVisible((prevState) => !prevState)}
 							>
@@ -264,8 +266,8 @@ const AuthScreen = (props) => {
 									}
 									if (!prevState && authState.inputValues.email.length !== 0) {
 										handleRememberMe();
-									} return !prevState;
-									
+									}
+									return !prevState;
 								})
 							}
 							tintColors={{ true: Colors.primary }}
@@ -353,7 +355,7 @@ const styles = StyleSheet.create({
 		maxWidth: Dimensions.get("screen").width,
 		paddingVertical: 10,
 		marginVertical: 2,
-		borderRadius:10
+		borderRadius: 10,
 	},
 	textStyle: {
 		fontSize: 18,
@@ -381,10 +383,10 @@ const styles = StyleSheet.create({
 	textInput: {
 		marginLeft: 10,
 		position: "absolute",
-		width:'100%',
+		width: "100%",
 		height: 55,
 		transform: [{ translateY: -27 }],
-		fontFamily: 'open-sans'
+		fontFamily: "open-sans",
 	},
 	errorContainer: {
 		marginLeft: 10,
