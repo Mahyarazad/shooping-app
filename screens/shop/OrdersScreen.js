@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
+import { View, Text } from "react-native";
 import { useSelector } from "react-redux";
 import OrderCard from "../../components/shop/OrderCard";
 import { useDispatch } from "react-redux";
@@ -24,7 +25,8 @@ const OrdersScreen = (props) => {
 
 	React.useEffect(() => {
 		loadedOrder();
-	}, [loadedOrder]);
+	}, [loadedOrder,orderData]);
+	
 
 	if (orderData?.length > 1) {
 		orderData.sort((a, b) => (a.id < b.id ? 1 : -1));
@@ -32,6 +34,7 @@ const OrdersScreen = (props) => {
 	if (isLoading) {
 		<ActivityIndicator size="large" color={Colors.primary} />;
 	}
+
 	return (
 		<FlatList
 			data={orderData}
