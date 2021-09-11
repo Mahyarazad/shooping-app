@@ -6,6 +6,8 @@ export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const SET_PRODUCT = "SET_PRODUCT";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ENV from "../../ENV";
+
+
 export const fetchProducts = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
@@ -19,7 +21,6 @@ export const fetchProducts = () => {
 			
 			if (!response.ok) {
 				const err = await response;
-				// console.log(err)
 				throw new Error("Something went wrong!");
 			}
 			const resData = await response.json();
@@ -38,7 +39,6 @@ export const fetchProducts = () => {
 			}
 			return dispatch({ type: SET_PRODUCT, product: loadedData });
 		} catch (err) {
-			console.log(err)
 			throw new Error(err.message);
 		}
 	};

@@ -111,7 +111,7 @@ const UserNavigator = () => {
 			<UserStack.Screen
 				name="edit-screen"
 				component={EditProductScreen}
-				options={({route}) => ({
+				options={({ route }) => ({
 					headerTitle: (props) => (
 						<LogoTitle
 							{...props}
@@ -130,9 +130,7 @@ const UserNavigator = () => {
 									iconName: "save",
 									iconColor: "white",
 									iconSize: 24,
-									onPress:
-										route.params.submit
-									,
+									onPress: route.params.submit,
 									...options,
 								}}
 								back={back}
@@ -140,19 +138,6 @@ const UserNavigator = () => {
 						);
 					},
 				})}
-				// options={({ route }) => ({
-					
-				// 	headerRight: () => (
-				// 		<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-				// 			<Item
-				// 				iconName="save"
-				// 				iconSize={24}
-				// 				onPress={route.params.submit}
-				// 				iconColor="white"
-				// 			/>
-				// 		</HeaderButtons>
-				// 	),
-				// })}
 			/>
 		</UserStack.Navigator>
 	);
@@ -239,24 +224,29 @@ const ShopNavigator = () => {
 };
 
 const Shop = () => {
+	const [authState, setAuthState] = React.useState(true);
 	const authData = useSelector((state) => state.auth.auth);
 	const dispatch = useDispatch();
 
-	const autoLogin = React.useCallback(() => {
-		dispatch(authActions.isLoggedIn());
+	const autoLogin = React.useCallback(async () => {
+		await dispatch(authActions.isLoggedIn());
 	}, [dispatch, authActions]);
 
 	React.useEffect(() => {
 		autoLogin();
 		if (authData) {
+			setAuthState(false);
 			dispatch(authActions.authenticate());
 		}
-		return () => {};
-	}, [authData, dispatch, autoLogin]);
+
+		return () => {
+			setAuthState(true);
+		};
+	}, [authData, dispatch, autoLogin, authState]);
 
 	return (
 		<NavigationContainer>
-			{!authData ? (
+			{authState ? (
 				<AuthNavigator />
 			) : (
 				<Drawer.Navigator

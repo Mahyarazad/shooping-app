@@ -6,6 +6,7 @@ import { removeOrder } from "../../store/actions/orders";
 import Card from "../UI/Card";
 
 const OrderCard = (props) => {
+	
 	const orderDetail = Object.values(props.orderItem.items);
 	const [showDetails, setShowDetails] = React.useState(false);
 	const [notify, setNotify] = React.useState(false);
@@ -30,6 +31,7 @@ const OrderCard = (props) => {
 			]);
 		}
 	}, [dispatch, notify]);
+
 	return (
 		<Card style={styles.itemContainer}>
 			<View style={styles.order}>

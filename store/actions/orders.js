@@ -3,7 +3,7 @@ export const ADD_ORDER = "ADD_ORDER";
 export const REMOVE_ORDER = "REMOVE_ORDER";
 export const SET_ORDER = "SER_ORDER";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import ENV from "../../ENV";
 export const addOrder = (cartItem, totalAmount) => {
 	return async (dispatch, getState) => {
 		let token = getState().auth.idToken;
@@ -13,7 +13,7 @@ export const addOrder = (cartItem, totalAmount) => {
 				const authData = await AsyncStorage.getItem("@storage_Key");
 				return authData !== null ? JSON.parse(authData) : null;
 			} catch (err) {
-				throw new Error(err.message)
+				throw new Error(err.message);
 			}
 		};
 		if (typeof token === "undefined") {
@@ -70,25 +70,44 @@ export const removeOrder = (orderId) => {
 			token = idToken;
 		}
 		const userId = getState().auth.localId;
-		await fetch(
-			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}/${orderId}.json?auth=${token}`,
-			{
-				method: "DELETE",
-			}
-		);
-
-		return dispatch({
-			type: REMOVE_ORDER,
-			orderId: orderId,
-		});
+		try {
+			const resData = await fetch(
+				`${ENV.databaseURL}order/${userId}/${orderId}.json?auth=${token}`,
+				{
+					method: "DELETE",
+				}
+			);
+			
+			return dispatch({
+				type: REMOVE_ORDER,
+				orderId: orderId,
+			});
+		} catch (err) {
+			console.log(err)
+			throw new Error(err.message);
+		}
 	};
 };
 
 export const fetchOrders = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
+		let token = getState().auth.idToken;
+
+		const asyncData = async () => {
+			try {
+				const authData = await AsyncStorage.getItem("@storage_Key");
+				return authData !== null ? JSON.parse(authData) : null;
+			} catch (err) {
+				console.log(err);
+			}
+		};
+		if (typeof token === "undefined") {
+			const { idToken } = await asyncData();
+			token = idToken;
+		}
 		const response = await fetch(
-			`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}.json`
+			`${ENV.databaseURL}order/${userId}.json?auth=${token}`
 		);
 
 		const resData = await response.json();
