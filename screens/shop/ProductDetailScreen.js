@@ -19,11 +19,11 @@ const ProductDetailScreen = (props) => {
 	const renderPurchaseMessage = React.useCallback(() => {
 		setPurchaseMessage(true);
 	}, [purchaseMessage]);
-	 
+
 	React.useEffect(() => {
 		if (purchaseMessage) {
 			const Timer = setTimeout(() => {
-				renderPurchaseMessage
+				setPurchaseMessage(false);
 			}, 1500);
 			return () => clearTimeout(Timer);
 		}
@@ -31,28 +31,27 @@ const ProductDetailScreen = (props) => {
 
 	return (
 		<ScrollView>
-			{purchaseMessage ? (
-				<AnimatedView
-					duration={300}
-					style={{ height: 40 }}
-				>
-					<Text style={styles.purchaseMessage}> Added to cart </Text>
-				</AnimatedView>
-			) : (
-				<></>
-			)}
 			<View style={styles.screen}>
 				<View style={styles.imageContainer}>
+					
 					<Image
 						style={styles.image}
 						source={{ uri: productItem.product.imageUrl }}
 					/>
 				</View>
+				{purchaseMessage ? (
+						<AnimatedView duration={300} style={{ height: 40 }}>
+							<Text style={styles.purchaseMessage}> Added to cart </Text>
+						</AnimatedView>
+					) : (
+						<></>
+					)}
 				<TouchableOpacity
 					style={styles.button}
 					onPress={() => {
 						dispatch(cartAction.addToCart(productItem.product)),
-						renderPurchaseMessage()}}
+							renderPurchaseMessage();
+					}}
 				>
 					<Text style={styles.buttonText}> Add to Cart </Text>
 				</TouchableOpacity>
@@ -64,7 +63,6 @@ const ProductDetailScreen = (props) => {
 					<Text style={styles.Item}> {productItem.product.description} </Text>
 				</View>
 			</View>
-			
 		</ScrollView>
 	);
 };

@@ -1,5 +1,5 @@
 import { View, StyleSheet, Text, Dimensions } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather,Ionicons } from "@expo/vector-icons";
 import React from "react";
 import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
@@ -20,11 +20,11 @@ const Header = ({ navigation, route, options, back }) => {
 	React.useEffect(() => {
 		handleLength();
 	}, [titleText]);
-
+	
 	return (
 		<View style={styles.header}>
 			<View style={styles.icon}>
-				{back && (
+				{back ? (
 					<Feather
 						color="white"
 						name={"chevron-left"}
@@ -33,7 +33,9 @@ const Header = ({ navigation, route, options, back }) => {
 						}}
 						size={30}
 					/>
-				)}
+				) : titleText !== 'Authenticate' && titleText !== 'Reset Password'&& <Ionicons name="list" size={28} color="white" onPress={() => {
+					navigation.openDrawer();
+				}}/>}
 			</View>
 
 			<View style={styles.headerTitle}>
@@ -53,7 +55,7 @@ const Header = ({ navigation, route, options, back }) => {
 		</View>
 	);
 };
-
+const paddingFromTop = 45;
 const styles = StyleSheet.create({
 	header: {
 		height: 90,
@@ -65,10 +67,10 @@ const styles = StyleSheet.create({
 	icon: {
 		position: "absolute",
 		left: 15,
-		top: 42,
+		top: paddingFromTop,
 	},
 	headerTitle: {
-		top: 42,
+		top: paddingFromTop,
 		position: "absolute",
 	},
 	titleText: {
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		position: "absolute",
 		right: 10,
-		top: 47,
+		top: paddingFromTop,
 	},
 });
 

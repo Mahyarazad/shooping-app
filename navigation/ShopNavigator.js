@@ -70,43 +70,27 @@ const UserNavigator = () => {
 			<UserStack.Screen
 				name="user-product"
 				component={UserProductScreen}
-				options={({ navigation }) => ({
-					headerStyle: {
-						backgroundColor: Colors.primary,
+				options={{
+					
+					headerTitle: (props) => <LogoTitle {...props} title="Customization" />,
+					header: ({ navigation, route, options, back }) => {
+						return (
+							<Header
+								navigation={navigation}
+								options={{
+									iconName: "edit",
+									iconColor: "white",
+									iconSize: 24,
+									onPress() {
+										navigation.navigate("edit-screen",{item:{product:{submit:""}}});
+									},
+									...options,
+								}}
+								back={back}
+							/>
+						);
 					},
-					headerTitle: (props) => (
-						<LogoTitle {...props} title="Customization" />
-					),
-					headerLeft: ({ focused, size }) => (
-						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-							<Item
-								title="product"
-								iconColor="white"
-								iconName="menu"
-								iconSize={24}
-								onPress={() => navigation.openDrawer()}
-							/>
-						</HeaderButtons>
-					),
-					headerRight: ({ focused, size }) => (
-						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-							<Item
-								iconName="edit"
-								iconSize={24}
-								onPress={() =>
-									navigation.navigate("edit-screen", {
-										item: {
-											product: {
-												submit: "",
-											},
-										},
-									})
-								}
-								iconColor="white"
-							/>
-						</HeaderButtons>
-					),
-				})}
+				}}
 			/>
 			<UserStack.Screen
 				name="edit-screen"
@@ -149,37 +133,26 @@ const ShopNavigator = () => {
 			<ShopStack.Screen
 				name="Product Overview"
 				component={ProductOverviewScreen}
-				options={({ navigation }) => ({
-					headerStyle: {
-						backgroundColor: Colors.primary,
+				options={{	
+					headerTitle: (props) => <LogoTitle {...props} title="Product Overview" />,
+					header: ({ navigation, route, options, back }) => {
+						return (
+							<Header
+								navigation={navigation}
+								options={{
+									iconName: "cart",
+									iconColor: "white",
+									iconSize: 24,
+									onPress() {
+										navigation.navigate("CartScreen");
+									},
+									...options,
+								}}
+								back={back}
+							/>
+						);
 					},
-					headerTitle: (props) => (
-						<LogoTitle {...props} title="Product Overview" />
-					),
-
-					headerLeft: ({ focused, size }) => (
-						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-							<Item
-								title="product"
-								iconColor="white"
-								iconName="menu"
-								iconSize={24}
-								onPress={() => navigation.openDrawer()}
-							/>
-						</HeaderButtons>
-					),
-					headerRight: () => (
-						<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-							<Item
-								title="cart"
-								iconColor="white"
-								iconName="cart"
-								iconSize={24}
-								onPress={() => navigation.navigate("CartScreen")}
-							/>
-						</HeaderButtons>
-					),
-				})}
+				}}
 			/>
 			<ShopStack.Screen
 				name="product-detail"
@@ -256,6 +229,9 @@ const Shop = () => {
 							width: 240,
 							height: "90%",
 							marginVertical: "20%",
+							borderRadius:20,
+							borderWidth:0,
+							overflow:'hidden'
 						},
 						drawerLabelStyle: {
 							fontSize: 18,
@@ -281,21 +257,26 @@ const Shop = () => {
 					<Drawer.Screen
 						name="Orders"
 						component={OrdersScreen}
-						options={({ route, navigation }) => ({
-							headerTitleStyle: { fontFamily: "open-sans" },
-							headerRight: () => (
-								<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-									<Item
-										style={{ marginRight: 15 }}
-										title="cart"
-										iconColor={Colors.primary}
-										iconName="cart"
-										iconSize={24}
-										onPress={() => navigation.navigate("CartScreen")}
+						options={{
+							headerTitle: (props) => <LogoTitle {...props} title="Order" />,
+							header: ({ navigation, route, options, back }) => {
+								return (
+									<Header
+										navigation={navigation}
+										options={{
+											iconName: "cart",
+											iconColor: "white",
+											iconSize: 24,
+											onPress() {
+												navigation.navigate("CartScreen");
+											},
+											...options,
+										}}
+										back={back}
 									/>
-								</HeaderButtons>
-							),
-						})}
+								);
+							},
+						}}
 					/>
 					<Drawer.Screen
 						name="Admin"

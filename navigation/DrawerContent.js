@@ -108,6 +108,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "flex-start",
 		alignItems: "flex-start",
+		backgroundColor:'#FFFAF9',
+		
 	},
 	row: {
 		flexDirection: "row",
@@ -121,7 +123,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "open-sans",
-		fontSize: 18,
+		fontSize: 22,
 	},
 	userId: {
 		fontFamily: "open-sans",

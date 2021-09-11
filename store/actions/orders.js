@@ -70,20 +70,26 @@ export const removeOrder = (orderId) => {
 			token = idToken;
 		}
 		const userId = getState().auth.localId;
+		console.log(token,userId,orderId)
 		try {
 			const resData = await fetch(
 				`${ENV.databaseURL}order/${userId}/${orderId}.json?auth=${token}`,
 				{
 					method: "DELETE",
+					headers: { "Content-Type": "application/json" },
 				}
 			);
-			
-			return dispatch({
-				type: REMOVE_ORDER,
-				orderId: orderId,
-			});
+			if (!resData.ok) {
+				const response = await resData.json();
+				console.log(response);
+			} else {
+				return dispatch({
+					type: REMOVE_ORDER,
+					orderId: orderId,
+				});
+			}
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 			throw new Error(err.message);
 		}
 	};

@@ -49,7 +49,7 @@ const OrdersScreen = (props) => {
 		);
 	}
 
-	if (!isLoading && !orderData) {
+	if (!isLoading && orderData) {
 		return (
 			<View style={styles.centered}>
 				<Text style={styles.emptyScreen}> There is no order to show. </Text>
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 	emptyScreen: {
 		fontFamily: "open-sans",
 		color: "black",
-		fontSize: 20,
+		fontSize: 28,
 		paddingBottom: 10,
 	},
 });
