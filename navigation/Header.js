@@ -1,11 +1,17 @@
 import { View, StyleSheet, Text, Dimensions } from "react-native";
-import { Feather,Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import Colors from "../constants/Colors";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useSelector } from "react-redux";
+import { DrawerActions } from "@react-navigation/native";
+import HamburgerIcon from "./HamburgerIcon";
 
 const Header = ({ navigation, route, options, back }) => {
+	
+	const drawerStatus = useSelector((state) => state.drawer.drawerStatus);
+	
 	const [titleText, setTitleText] = React.useState(
 		options.headerTitle().props.title
 	);
@@ -13,14 +19,14 @@ const Header = ({ navigation, route, options, back }) => {
 	const handleLength = React.useCallback(() => {
 		if (titleText.length > 25) {
 			setTitleText(titleText.substring(0, 25) + "...");
-			console.log("It is lebther than 10 char");
 		}
 	}, [titleText]);
 
 	React.useEffect(() => {
 		handleLength();
-	}, [titleText]);
-	
+		
+	}, [titleText, drawerStatus]);
+
 	return (
 		<View style={styles.header}>
 			<View style={styles.icon}>
@@ -33,9 +39,19 @@ const Header = ({ navigation, route, options, back }) => {
 						}}
 						size={30}
 					/>
-				) : titleText !== 'Authenticate' && titleText !== 'Reset Password'&& <Ionicons name="list" size={28} color="white" onPress={() => {
-					navigation.openDrawer();
-				}}/>}
+				) : (
+					titleText !== "Authenticate" &&
+					titleText !== "Reset Password" && (
+
+						<HamburgerIcon 
+							hamburgerWidth={27}
+							hamburgerLine={4}
+							burgerMargin={3}
+							marginFromTop={30}
+							activateIcon={drawerStatus}
+							onPress={()=>navigation.dispatch(DrawerActions.openDrawer())}/>
+					)
+				)}
 			</View>
 
 			<View style={styles.headerTitle}>
@@ -66,7 +82,7 @@ const styles = StyleSheet.create({
 	},
 	icon: {
 		position: "absolute",
-		left: 15,
+		left: 20,
 		top: paddingFromTop,
 	},
 	headerTitle: {

@@ -15,6 +15,7 @@ import Colors from "../../constants/Colors";
 import { addToCart } from "../../store/actions/cart.js";
 import AnimatedView from "../../components/UI/AnimatedView";
 
+
 const ProductOverviewScreen = (props) => {
 	const products = useSelector((state) => state.products.availableProducts);
 	const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const ProductOverviewScreen = (props) => {
 	const [isRefreshing, setIsRefreshing] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
 	const [purchaseMessage, setPurchaseMessage] = React.useState(false);
+
+
 
 	const loadProducts = React.useCallback(async () => {
 		setErrorMessage(null);
@@ -92,7 +95,10 @@ const ProductOverviewScreen = (props) => {
 	return (
 		<View>
 			{purchaseMessage ? (
-				<AnimatedView duration={300} style={{ height: 30, backgroundColor: 'white' }}>
+				<AnimatedView
+					duration={300}
+					style={{ height: 30, backgroundColor: "white" }}
+				>
 					<Text style={styles.purchaseMessage}> Added to cart </Text>
 				</AnimatedView>
 			) : (

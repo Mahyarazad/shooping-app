@@ -5,7 +5,6 @@ import * as authActions from "../store/actions/auth";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import ProductOverviewScreen from "../screens/shop/ProductsOverviewScreen";
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
@@ -16,11 +15,16 @@ import OrdersScreen from "../screens/shop/OrdersScreen";
 import LandingScreen from "../screens/LandScreen";
 import DrawerContent from "./DrawerContent";
 import Colors from "../constants/Colors";
-import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import AuthScreen from "../screens/user/AuthScreen";
 import ResetPassword from "../screens/user/ResetPassword";
 import LogoTitle from "./LogoTitle";
 import Header from "./Header";
+
+import { toggleDrawer, closeDrawer } from "../store/actions/drawer";
+import {
+	useNavigationContainerRef,
+	useFocusEffect,
+} from "@react-navigation/native";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
@@ -71,8 +75,9 @@ const UserNavigator = () => {
 				name="user-product"
 				component={UserProductScreen}
 				options={{
-					
-					headerTitle: (props) => <LogoTitle {...props} title="Customization" />,
+					headerTitle: (props) => (
+						<LogoTitle {...props} title="Customization" />
+					),
 					header: ({ navigation, route, options, back }) => {
 						return (
 							<Header
@@ -82,7 +87,9 @@ const UserNavigator = () => {
 									iconColor: "white",
 									iconSize: 24,
 									onPress() {
-										navigation.navigate("edit-screen",{item:{product:{submit:""}}});
+										navigation.navigate("edit-screen", {
+											item: { product: { submit: "" } },
+										});
 									},
 									...options,
 								}}
@@ -128,13 +135,24 @@ const UserNavigator = () => {
 };
 
 const ShopNavigator = () => {
+	// const dispatch = useDispatch();
+
+	// if (useDrawerStatus() === "closed") {
+	// 	dispatch(toggleDrawer());
+	// }
+	// if (useDrawerStatus() === "open") {
+	// 	dispatch(openDrawer());
+	// }
+
 	return (
 		<ShopStack.Navigator>
 			<ShopStack.Screen
 				name="Product Overview"
 				component={ProductOverviewScreen}
-				options={{	
-					headerTitle: (props) => <LogoTitle {...props} title="Product Overview" />,
+				options={{
+					headerTitle: (props) => (
+						<LogoTitle {...props} title="Product Overview" />
+					),
 					header: ({ navigation, route, options, back }) => {
 						return (
 							<Header
@@ -197,7 +215,10 @@ const ShopNavigator = () => {
 };
 
 const Shop = () => {
-	const [authState, setAuthState] = React.useState(true);
+	const navigationRef = useNavigationContainerRef();
+	const routeNameRef = React.useRef();
+
+	// const [authState, setAuthState] = React.useState(true);
 	const authData = useSelector((state) => state.auth.auth);
 	const dispatch = useDispatch();
 
@@ -206,88 +227,118 @@ const Shop = () => {
 	}, [dispatch, authActions]);
 
 	React.useEffect(() => {
-		autoLogin();
-		if (authData) {
-			setAuthState(false);
-			dispatch(authActions.authenticate());
+		let isMounted = true;
+		if (isMounted) {
+			autoLogin();
+			if (authData) {
+				dispatch(authActions.authenticate());
+			}
 		}
 
 		return () => {
-			setAuthState(true);
+			isMounted = false;
 		};
-	}, [authData, dispatch, autoLogin, authState]);
+	}, [authData, dispatch, autoLogin]);
 
-	return (
-		<NavigationContainer>
-			{authState ? (
-				<AuthNavigator />
-			) : (
-				<Drawer.Navigator
-					screenOptions={{
-						drawerStyle: {
-							backgroundColor: "white",
-							width: 240,
-							height: "90%",
-							marginVertical: "20%",
-							borderRadius:20,
-							borderWidth:0,
-							overflow:'hidden'
-						},
-						drawerLabelStyle: {
-							fontSize: 18,
-							marginVertical: 0,
+	React.useEffect(() => {
+		navigationRef.addListener("state", (e) => {
+			if (e.data.state.history) {
+				const navState = Object.values(e.data.state.history);
+				const drawerState =
+					Object.values(navState)[Object.values(navState).length - 1];
+
+				if (Object.keys(drawerState)[1] === "status") {
+					dispatch(toggleDrawer());
+				}
+				if (Object.keys(drawerState)[1] === "key") {
+					dispatch(closeDrawer());
+				}
+			}
+		});
+	}, []);
+
+	return !authData ? (
+		<NavigationContainer
+			ref={navigationRef}
+			onReady={() => {
+				routeNameRef.current = navigationRef;
+			}}
+		>
+			<AuthNavigator />
+		</NavigationContainer>
+	) : (
+		<NavigationContainer
+			ref={navigationRef}
+			onReady={() => {
+				routeNameRef.current = navigationRef;
+			}}
+		>
+			<Drawer.Navigator
+				screenOptions={{
+					drawerStyle: {
+						backgroundColor: "white",
+						width: 240,
+						marginTop: 90,
+						height: "80%",
+						marginVertical: "20%",
+						borderRadius: 20,
+						borderWidth: 0,
+						overflow: "hidden",
+					},
+					drawerLabelStyle: {
+						fontSize: 18,
+						marginVertical: 0,
+						fontFamily: "open-sans",
+						color: "black",
+					},
+					drawerActiveTintColor: Colors.primary,
+					drawerActiveBackgroundColor: "white",
+				}}
+				drawerContent={(props) => <DrawerContent {...props} />}
+			>
+				<Drawer.Screen
+					name="Products"
+					component={ShopNavigator}
+					options={({ route, navigation }) => ({
+						headerShown: false,
+						headerStyle: {
 							fontFamily: "open-sans",
-							color: "black",
 						},
-						drawerActiveTintColor: Colors.primary,
-						drawerActiveBackgroundColor: "white",
+					})}
+				/>
+				<Drawer.Screen
+					name="Orders"
+					component={OrdersScreen}
+					options={{
+						headerTitle: (props) => <LogoTitle {...props} title="Order" />,
+						header: ({ navigation, route, options, back }) => {
+							return (
+								<Header
+									navigation={navigation}
+									options={{
+										iconName: "cart",
+										iconColor: "white",
+										iconSize: 24,
+										onPress() {
+											navigation.navigate("CartScreen");
+										},
+										...options,
+									}}
+									back={back}
+								/>
+							);
+						},
 					}}
-					drawerContent={(props) => <DrawerContent {...props} />}
-				>
-					<Drawer.Screen
-						name="Products"
-						component={ShopNavigator}
-						options={({ route, navigation }) => ({
-							headerShown: false,
-							headerStyle: {
-								fontFamily: "open-sans",
-							},
-						})}
-					/>
-					<Drawer.Screen
-						name="Orders"
-						component={OrdersScreen}
-						options={{
-							headerTitle: (props) => <LogoTitle {...props} title="Order" />,
-							header: ({ navigation, route, options, back }) => {
-								return (
-									<Header
-										navigation={navigation}
-										options={{
-											iconName: "cart",
-											iconColor: "white",
-											iconSize: 24,
-											onPress() {
-												navigation.navigate("CartScreen");
-											},
-											...options,
-										}}
-										back={back}
-									/>
-								);
-							},
-						}}
-					/>
-					<Drawer.Screen
-						name="Admin"
-						component={UserNavigator}
-						options={({ route, navigate }) => ({
-							headerShown: false,
-							headerTitleStyle: { fontFamily: "open-sans" },
-						})}
-					/>
-				</Drawer.Navigator>
-			)}
+				/>
+				<Drawer.Screen
+					name="Admin"
+					component={UserNavigator}
+					options={({ route, navigate }) => ({
+						headerShown: false,
+						headerTitleStyle: { fontFamily: "open-sans" },
+					})}
+				/>
+			</Drawer.Navigator>
 		</NavigationContainer>
 	);
 };

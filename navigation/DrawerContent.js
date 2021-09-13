@@ -4,10 +4,11 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import Colors from "../constants/Colors";
 import { logout } from "../store/actions/auth";
-import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
 
 const DrawerContent = (props) => {
+
 	const dispatch = useDispatch();
 	const [userData, setUserData] = React.useState();
 	const userFromAsyncStorage = React.useCallback(async () => {
@@ -21,12 +22,14 @@ const DrawerContent = (props) => {
 			throw new Error(err.message);
 		}
 	}, [userData]);
+
 	React.useEffect(() => {
 		userFromAsyncStorage();
-	}, []);
+	}, [props]);
 
 	const Logout = React.useCallback(async () => {
 		await dispatch(logout());
+		
 	}, [dispatch]);
 
 	return (
@@ -108,8 +111,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "flex-start",
 		alignItems: "flex-start",
-		backgroundColor:'#FFFAF9',
-		
+		backgroundColor: "#FFFAF9",
 	},
 	row: {
 		flexDirection: "row",

@@ -9,13 +9,16 @@ import { useFonts } from "expo-font";
 import cartReducer from "./store/reducers/cart";
 import productReducer from "./store/reducers/products";
 import orderReducer from "./store/reducers/orders";
+import {drawerReducer} from "./store/reducers/drawer";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
 import { StatusBar } from 'expo-status-bar';
 
 
+
 // LogBox.ignoreLogs([
 // 	"Non-serializable values were found in the navigation state",
+// 	"Warning: Cannot update a component from inside the function body of a different component."
 // ]);
 
 const rootReducer = combineReducers({
@@ -23,6 +26,7 @@ const rootReducer = combineReducers({
 	cart: cartReducer,
 	order: orderReducer,
 	auth: authReducer,
+	drawer: drawerReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
