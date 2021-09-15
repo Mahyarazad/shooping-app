@@ -4,6 +4,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import Colors from "../constants/Colors";
 import { logout } from "../store/actions/auth";
+import { closeDrawer } from "../store/actions/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 
@@ -28,7 +29,13 @@ const DrawerContent = (props) => {
 	}, [props]);
 
 	const Logout = React.useCallback(async () => {
-		await dispatch(logout());
+	
+		await dispatch(logout());	
+		dispatch(closeDrawer());
+		props.navigation.reset({
+			index: 0,
+			routes: [{ name: 'Product Overview' }],
+		  });
 		
 	}, [dispatch]);
 

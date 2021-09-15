@@ -1,5 +1,5 @@
 import Product from "../../models/Product";
-
+import * as Notifications from "expo-notifications";
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
@@ -7,18 +7,17 @@ export const SET_PRODUCT = "SET_PRODUCT";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ENV from "../../ENV";
 
-
 export const fetchProducts = () => {
 	return async (dispatch, getState) => {
 		const userId = getState().auth.localId;
 		const token = getState().auth.idToken;
-		
+
 		try {
 			//async function goes here
 			const response = await fetch(
-				`${ENV.databaseURL}product.json?auth=${token}`,
+				`${ENV.databaseURL}product.json?auth=${token}`
 			);
-			
+
 			if (!response.ok) {
 				const err = await response;
 				throw new Error("Something went wrong!");
@@ -33,7 +32,9 @@ export const fetchProducts = () => {
 						resData[key].title,
 						resData[key].imageUrl,
 						resData[key].description,
-						+resData[key].price
+						+resData[key].price,
+						resData[key].pushToken,
+
 					)
 				);
 			}
@@ -60,12 +61,9 @@ export const deleteProduct = (productId) => {
 			const { idToken } = await asyncData();
 			token = idToken;
 		}
-		await fetch(
-			`${ENV.databaseURL}product/${productId}.json?auth=${token}`,
-			{
-				method: "DELETE",
-			}
-		);
+		await fetch(`${ENV.databaseURL}product/${productId}.json?auth=${token}`, {
+			method: "DELETE",
+		});
 		return dispatch({ type: DELETE_PRODUCT, productId: productId });
 	};
 };
@@ -124,18 +122,23 @@ export const createProduct = (product) => {
 		}
 		const userId = getState().auth.localId;
 		// async function goes here
+
 		try {
+			const pushToken = (await Notifications.getExpoPushTokenAsync()).data;
 			const response = await fetch(
 				`${ENV.databaseURL}product.json?auth=${token}`,
 				{
 					method: "POST",
 					headers: { "content-type": "application/json" },
-					body: JSON.stringify({ ...product, ownerId: userId }),
+					body: JSON.stringify({
+						...product,
+						ownerId: userId,
+						pushToken: pushToken,
+					}),
 				}
 			);
 			if (!response.ok) {
 				const error = await response.json();
-				console.log(error);
 				throw new Error("Something went wrong!");
 			}
 			const resData = await response.json();

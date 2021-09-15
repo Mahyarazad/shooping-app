@@ -13,6 +13,7 @@ const initialState = {
 };
 
 const productReducer = (state = initialState, action) => {
+	
 	switch (action.type) {
 		case SET_PRODUCT:
 
@@ -61,7 +62,8 @@ const productReducer = (state = initialState, action) => {
 				action.product.title,
 				action.product.imageUrl,
 				action.product.description,
-				parseFloat(action.product.price)
+				parseFloat(action.product.price),
+				action.product.pushToken
 			);
 
 			return {

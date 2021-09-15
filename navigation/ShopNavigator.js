@@ -21,10 +21,9 @@ import LogoTitle from "./LogoTitle";
 import Header from "./Header";
 
 import { toggleDrawer, closeDrawer } from "../store/actions/drawer";
-import {
-	useNavigationContainerRef,
-	useFocusEffect,
-} from "@react-navigation/native";
+import { useNavigationContainerRef } from "@react-navigation/native";
+
+import * as Notifications from "expo-notifications";
 
 const ShopStack = createNativeStackNavigator();
 const UserStack = createNativeStackNavigator();
@@ -135,15 +134,6 @@ const UserNavigator = () => {
 };
 
 const ShopNavigator = () => {
-	// const dispatch = useDispatch();
-
-	// if (useDrawerStatus() === "closed") {
-	// 	dispatch(toggleDrawer());
-	// }
-	// if (useDrawerStatus() === "open") {
-	// 	dispatch(openDrawer());
-	// }
-
 	return (
 		<ShopStack.Navigator>
 			<ShopStack.Screen
@@ -216,7 +206,7 @@ const ShopNavigator = () => {
 
 const Shop = () => {
 	const navigationRef = useNavigationContainerRef();
-	const routeNameRef = React.useRef();
+	const containerRef = React.useRef();
 
 	// const [authState, setAuthState] = React.useState(true);
 	const authData = useSelector((state) => state.auth.auth);
@@ -227,18 +217,19 @@ const Shop = () => {
 	}, [dispatch, authActions]);
 
 	React.useEffect(() => {
-		let isMounted = true;
-		if (isMounted) {
-			autoLogin();
-			if (authData) {
-				dispatch(authActions.authenticate());
-			}
-		}
+		// let isMounted = true;
+		// if (isMounted) {
 
-		return () => {
-			isMounted = false;
-		};
-	}, [authData, dispatch, autoLogin]);
+		// }
+
+		autoLogin();
+		if (authData) {
+			dispatch(authActions.authenticate());
+		}
+		// return () => {
+		// 	isMounted = false;
+		// };
+	}, [authData, dispatch, authActions, autoLogin]);
 
 	React.useEffect(() => {
 		navigationRef.addListener("state", (e) => {
@@ -257,88 +248,101 @@ const Shop = () => {
 		});
 	}, []);
 
-	return !authData ? (
+	React.useEffect(() => {
+		const backgoundSubscrption =
+			Notifications.addNotificationResponseReceivedListener((notifications) => {
+				console.log(notifications)
+			});
+		const foregoundSubscrption = Notifications.addNotificationReceivedListener(
+			(notifications) => {
+				console.log(notifications)
+				const { request } = notifications;
+				//navigationRef.navigate(request.content.data.data);
+			}
+		);
+
+		return () => {
+			foregoundSubscrption.remove(), backgoundSubscrption.remove();
+		};
+	});
+
+	return (
 		<NavigationContainer
 			ref={navigationRef}
 			onReady={() => {
-				routeNameRef.current = navigationRef;
+				containerRef.current = navigationRef;
 			}}
 		>
-			<AuthNavigator />
-		</NavigationContainer>
-	) : (
-		<NavigationContainer
-			ref={navigationRef}
-			onReady={() => {
-				routeNameRef.current = navigationRef;
-			}}
-		>
-			<Drawer.Navigator
-				screenOptions={{
-					drawerStyle: {
-						backgroundColor: "white",
-						width: 240,
-						marginTop: 90,
-						height: "80%",
-						marginVertical: "20%",
-						borderRadius: 20,
-						borderWidth: 0,
-						overflow: "hidden",
-					},
-					drawerLabelStyle: {
-						fontSize: 18,
-						marginVertical: 0,
-						fontFamily: "open-sans",
-						color: "black",
-					},
-					drawerActiveTintColor: Colors.primary,
-					drawerActiveBackgroundColor: "white",
-				}}
-				drawerContent={(props) => <DrawerContent {...props} />}
-			>
-				<Drawer.Screen
-					name="Products"
-					component={ShopNavigator}
-					options={({ route, navigation }) => ({
-						headerShown: false,
-						headerStyle: {
+			{!authData ? (
+				<AuthNavigator />
+			) : (
+				<Drawer.Navigator
+					screenOptions={{
+						drawerStyle: {
+							backgroundColor: "white",
+							width: 240,
+							marginTop: 90,
+							height: "80%",
+							marginVertical: "20%",
+							borderRadius: 20,
+							borderWidth: 0,
+							overflow: "hidden",
+						},
+						drawerLabelStyle: {
+							fontSize: 18,
+							marginVertical: 0,
 							fontFamily: "open-sans",
+							color: "black",
 						},
-					})}
-				/>
-				<Drawer.Screen
-					name="Orders"
-					component={OrdersScreen}
-					options={{
-						headerTitle: (props) => <LogoTitle {...props} title="Order" />,
-						header: ({ navigation, route, options, back }) => {
-							return (
-								<Header
-									navigation={navigation}
-									options={{
-										iconName: "cart",
-										iconColor: "white",
-										iconSize: 24,
-										onPress() {
-											navigation.navigate("CartScreen");
-										},
-										...options,
-									}}
-									back={back}
-								/>
-							);
-						},
+						drawerActiveTintColor: Colors.primary,
+						drawerActiveBackgroundColor: "white",
 					}}
-				/>
-				<Drawer.Screen
-					name="Admin"
-					component={UserNavigator}
-					options={({ route, navigate }) => ({
-						headerShown: false,
-						headerTitleStyle: { fontFamily: "open-sans" },
-					})}
-				/>
-			</Drawer.Navigator>
+					drawerContent={(props) => <DrawerContent {...props} />}
+				>
+					<Drawer.Screen
+						name="Products"
+						component={ShopNavigator}
+						options={({ route, navigation }) => ({
+							headerShown: false,
+							headerStyle: {
+								fontFamily: "open-sans",
+							},
+						})}
+					/>
+					<Drawer.Screen
+						name="Orders"
+						component={OrdersScreen}
+						options={{
+							headerTitle: (props) => <LogoTitle {...props} title="Order" />,
+							header: ({ navigation, route, options, back }) => {
+								return (
+									<Header
+										navigation={navigation}
+										options={{
+											iconName: "cart",
+											iconColor: "white",
+											iconSize: 24,
+											onPress() {
+												navigation.navigate("CartScreen");
+											},
+											...options,
+										}}
+										back={back}
+									/>
+								);
+							},
+						}}
+					/>
+					<Drawer.Screen
+						name="Admin"
+						component={UserNavigator}
+						options={({ route, navigate }) => ({
+							headerShown: false,
+							headerTitleStyle: { fontFamily: "open-sans" },
+						})}
+					/>
+				</Drawer.Navigator>
+			)}
 		</NavigationContainer>
 	);
 };

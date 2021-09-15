@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Colors from "../../constants/Colors";
 import { useSelector, useDispatch } from "react-redux";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, State } from "react-native-gesture-handler";
 import CardItem from "../../components/shop/CardItem";
 import {
 	removeFromCart,
@@ -23,6 +23,7 @@ const CartScreen = (props) => {
 	const totalAmount = useSelector((state) => state.cart.totalAmount);
 	const [isLoading, setIsLoading] = React.useState(false);
 	const dispatch = useDispatch();
+	const cart = useSelector((state) => state.cart);
 
 	const item = useSelector((state) => {
 		const itemArray = [];
@@ -33,8 +34,10 @@ const CartScreen = (props) => {
 				productPrice: state.cart.item[key].productPrice,
 				quantity: state.cart.item[key].quantity,
 				sum: state.cart.item[key].sum,
+				pushToken: state.cart.item[key].pushToken,
 			});
 		}
+
 		return itemArray.sort((a, b) => (a.productId > b.productId ? 1 : -1));
 	});
 

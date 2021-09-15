@@ -24,7 +24,7 @@ export const addOrder = (cartItem, totalAmount) => {
 		try {
 			const date = new Date();
 			const response = await fetch(
-				`https://shop-app-c577e-default-rtdb.asia-southeast1.firebasedatabase.app/order/${userId}.json?auth=${token}`,
+				`${ENV.databaseURL}order/${userId}.json?auth=${token}`,
 				{
 					method: "POST",
 					headers: { "content-type": "aplication/json" },
@@ -37,6 +37,23 @@ export const addOrder = (cartItem, totalAmount) => {
 			);
 
 			const resData = await response.json();
+			cartItem.map((orderItem) => {
+
+				fetch("https://exp.host/--/api/v2/push/send", {
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Accept-Encoding": "gzip, deflate",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						to: orderItem.pushToken,
+						data: { data: "Salam Naghi" },
+						title: "Order was placed! 📣",
+						body: `${orderItem.quantity} pieces of ${orderItem.productTitle} just sold! 🛒`,
+					}),
+				});
+			});
 
 			return dispatch({
 				type: ADD_ORDER,
@@ -70,7 +87,6 @@ export const removeOrder = (orderId) => {
 			token = idToken;
 		}
 		const userId = getState().auth.localId;
-		console.log(token,userId,orderId)
 		try {
 			const resData = await fetch(
 				`${ENV.databaseURL}order/${userId}/${orderId}.json?auth=${token}`,
@@ -81,7 +97,6 @@ export const removeOrder = (orderId) => {
 			);
 			if (!resData.ok) {
 				const response = await resData.json();
-				console.log(response);
 			} else {
 				return dispatch({
 					type: REMOVE_ORDER,
@@ -89,7 +104,6 @@ export const removeOrder = (orderId) => {
 				});
 			}
 		} catch (err) {
-			console.log(err);
 			throw new Error(err.message);
 		}
 	};

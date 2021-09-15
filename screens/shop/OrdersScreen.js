@@ -1,6 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native-gesture-handler";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet,FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import OrderCard from "../../components/shop/OrderCard";
 import { useDispatch } from "react-redux";
@@ -49,11 +48,11 @@ const OrdersScreen = (props) => {
 		);
 	}
 
-	if (!isLoading && orderData) {
+	if (!isLoading && orderData.length === 0) {
 		return (
-			<View style={styles.centered}>
+			<AnimatedView style={styles.centered}>
 				<Text style={styles.emptyScreen}> There is no order to show. </Text>
-			</View>
+			</AnimatedView>
 		);
 	}
 
