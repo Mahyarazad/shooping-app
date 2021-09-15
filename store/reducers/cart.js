@@ -65,6 +65,7 @@ const cartReducer = (state = initialState, action) => {
 			const updatedItem = new CartItem(
 				targetItem.quantity - 1,
 				targetItem.productTitle,
+				targetItem.pushToken,
 				targetItem.productPrice,
 				targetItem.sum - targetItem.productPrice
 			);

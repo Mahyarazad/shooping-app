@@ -11,7 +11,7 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import expo.modules.splashscreen.singletons.SplashScreen;
 import expo.modules.splashscreen.SplashScreenImageResizeMode;
-import com.facebook.react.modules.network.OkHttpClientProvider;
+
 
 public class MainActivity extends ReactActivity {
 
@@ -26,7 +26,6 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    //attachInterceptor();
     // Set the theme to AppTheme BEFORE onCreate to support 
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.

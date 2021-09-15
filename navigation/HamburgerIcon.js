@@ -96,7 +96,7 @@ const HamburgerIcon = (props) => {
 						justifyContent: "center",
 						alignItems: "center",
 						height: props.hamburgerLine,
-						backgroundColor: "#0062ff",
+						backgroundColor: "white",
 						marginTop: props.burgerMargin,
 						opacity: middleBarOpacity,
 						transform: [
