@@ -7,9 +7,9 @@ import {
 	Text,
 	ActivityIndicator,
 	Alert,
-	ImageBackground,
 	TouchableOpacity,
 	Dimensions,
+	Animated,
 } from "react-native";
 import LoginInput from "../../components/UI/LoginInput";
 import CustomButton from "../../components/UI/CustomButton";
@@ -21,6 +21,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign, Entypo, Fontisto } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import CheckBox from "@react-native-community/checkbox";
+import AnimatedImage from "./AnimatedImage";
+import AnimatedDots from "../../components/UI/AnimatedDots";
+
 
 const UPDATE_FORM_INPUT = "UPDATE_FORM_INPUT";
 
@@ -177,149 +180,144 @@ const AuthScreen = (props) => {
 	if (!loggedIn) {
 		return <LandingScreen />;
 	}
+
 	return (
 		<KeyboardAvoidingView style={{ flex: 1 }}>
-			<ImageBackground
-				resizeMode="cover"
-				style={{
-					width: "100%",
-					height: "100%",
-					position: "absolute",
-				}}
-				imageStyle={{ opacity: 0.5}}
-				//thanks to "Videezy.com" for this awesome animation
-				source={require("../../assets/Grey.png")}
-			>
+			<AnimatedImage />
+			<ScrollView style={{ marginTop: 150 }}>
+				<View style={styles.fieldContainer}>
+					<Fontisto
+						style={{ paddingLeft: 15 }}
+						name="email"
+						size={24}
+						color="gray"
+					/>
+					<LoginInput
+						input={styles.textInput}
+						placeholder="Email"
+						labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
+						screen={{ width: "85%" }}
+						id="email"
+						keyboardType="email-address"
+						required
+						email
+						onInputChange={inputChangeHandler}
+						initialValue={authState.email}
+						textContentType="username"
+						autoCapitalize="none"
+						onSubmitEditing={() => {
+							inputRef.current.focus();
+						}}
+						returnKeyType="next"
+						errorContainer={styles.errorContainer}
+						errorMessage="Please enter a valid email address"
+					/>
+				</View>
 
-				<ScrollView style={{ marginTop: 150 }}>
-					<View style={styles.fieldContainer}>
-						<Fontisto
-							style={{ paddingLeft: 15 }}
-							name="email"
-							size={24}
-							color="gray"
-						/>
-						<LoginInput
-							input={styles.textInput}
-							placeholder="Email"
-							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
-							screen={{ width: "85%" }}
-							id="email"
-							keyboardType="email-address"
-							required
-							email
-							onInputChange={inputChangeHandler}
-							initialValue={authState.email}
-							textContentType="username"
-							autoCapitalize="none"
-							onSubmitEditing={() => {
-								inputRef.current.focus();
-							}}
-							returnKeyType="next"
-							errorContainer={styles.errorContainer}
-							errorMessage="Please enter a valid email address"
-						/>
-					</View>
-
-					<View style={styles.fieldContainer}>
-						<AntDesign
-							style={{ paddingLeft: 15 }}
-							name="lock"
-							size={24}
-							color="gray"
-						/>
-						<LoginInput
-							placeholder="Password"
-							input={styles.textInput}
-							labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
-							screen={{ width: "85%" }}
-							ref={inputRef}
-							id="password"
-							keyboardType="default"
-							secureTextEntry={passwordVisible}
-							required
-							onInputChange={inputChangeHandler}
-							initialValue={authState.password}
-							errorContainer={styles.errorContainer}
-							errorMessage="Minimun length should be six letters"
-						/>
-						<View style={{ transform: [{ translateX: -27 }] }}>
-							<TouchableOpacity
-								onPress={() => setPasswordVisible((prevState) => !prevState)}
-							>
-								<Entypo
-									name={passwordVisible ? "eye" : "eye-with-line"}
-									size={24}
-									color="#fc036b"
-								/>
-							</TouchableOpacity>
-						</View>
-					</View>
-					<View style={styles.checkBox}>
-						<CheckBox
-							disabled={false}
-							value={rememberMe}
-							onValueChange={() =>
-								setRememberMe((prevState) => {
-									if (prevState && authState.inputValues.email.length !== 0) {
-										deleteRememberMe();
-									}
-									if (!prevState && authState.inputValues.email.length !== 0) {
-										handleRememberMe();
-									}
-									return !prevState;
-								})
-							}
-							tintColors={{ true: Colors.primary }}
-						/>
-						<Text style={{ fontFamily: "open-sans", fontSize: 16 }}>
-							{" "}
-							Remember Me{" "}
-						</Text>
-
-						<View style={{ marginLeft: 125 }}>
-							<CustomButton
-								buttonStyle={{
-									backgroundColor: "transparent",
-								}}
-								text="Forget Password"
-								onPress={() => props.navigation.navigate("reset-password")}
+				<View style={styles.fieldContainer}>
+					<AntDesign
+						style={{ paddingLeft: 15 }}
+						name="lock"
+						size={24}
+						color="gray"
+					/>
+					<LoginInput
+						placeholder="Password"
+						input={styles.textInput}
+						labelStyle={{ fontSize: 20, fontFamily: "open-sans-bold" }}
+						screen={{ width: "85%" }}
+						ref={inputRef}
+						id="password"
+						keyboardType="default"
+						secureTextEntry={passwordVisible}
+						required
+						onInputChange={inputChangeHandler}
+						initialValue={authState.password}
+						errorContainer={styles.errorContainer}
+						errorMessage="Minimun length should be six letters"
+					/>
+					<View style={{ transform: [{ translateX: -27 }] }}>
+						<TouchableOpacity
+							onPress={() => setPasswordVisible((prevState) => !prevState)}
+						>
+							<Entypo
+								name={passwordVisible ? "eye" : "eye-with-line"}
+								size={24}
+								color="#fc036b"
 							/>
-						</View>
+						</TouchableOpacity>
 					</View>
+				</View>
+				<View style={styles.checkBox}>
+					<CheckBox
+						disabled={false}
+						value={rememberMe}
+						onValueChange={() =>
+							setRememberMe((prevState) => {
+								if (prevState && authState.inputValues.email.length !== 0) {
+									deleteRememberMe();
+								}
+								if (!prevState && authState.inputValues.email.length !== 0) {
+									handleRememberMe();
+								}
+								return !prevState;
+							})
+						}
+						tintColors={{ true: Colors.primary }}
+					/>
+					<Text
+						style={{ fontFamily: "open-sans", fontSize: 16, color: "white" }}
+					>
+						Remember Me
+					</Text>
 
-					<View style={styles.buttonContainer}>
-						{disableButton ? (
-							<ActivityIndicator size="large" color={Colors.primary} />
-						) : (
-							<CustomButton
-								buttonStyle={{
-									backgroundColor: "#fc036b",
-									...styles.buttonStyle,
-								}}
-								textStyle={styles.textStyleLogin}
-								text={logState ? "SIGN-UP " : "LOGIN"}
-								onPress={logHandler}
-								disabled={disableButton}
-							/>
-						)}
+					<View style={{ marginLeft: 125 }}>
 						<CustomButton
 							buttonStyle={{
-								backgroundColor: "white",
-								borderColor: "#fc036b",
-								borderWidth: 1,
-								...styles.buttonStyle,
+								backgroundColor: "transparent",
 							}}
-							textStyle={styles.textStyle}
-							text={logState ? "I have a user" : "Don't have user, sign-up"}
-							onPress={() => {
-								setLogState((prevState) => !prevState);
-							}}
-							disabled={disableButton}
+							text="Forget Password"
+							onPress={() => props.navigation.navigate("reset-password")}
 						/>
 					</View>
-				</ScrollView>
-			</ImageBackground>
+				</View>
+
+				<View style={styles.buttonContainer}>
+					{disableButton ? (
+						<AnimatedDots
+							container={{
+								...styles.buttonStyle,
+								backgroundColor: "transparent",
+							}}
+						/>
+					) : (
+						<CustomButton
+							buttonStyle={{
+								backgroundColor: "#fc036b",
+								...styles.buttonStyle,
+							}}
+							textStyle={styles.textStyleLogin}
+							text={logState ? "SIGN-UP " : "LOGIN"}
+							onPress={logHandler}
+							disabled={disableButton}
+						/>
+					)}
+					<CustomButton
+						buttonStyle={{
+							backgroundColor: "white",
+							borderColor: "#fc036b",
+							borderWidth: 1,
+							...styles.buttonStyle,
+						}}
+						textStyle={styles.textStyle}
+						text={logState ? "I have a user" : "Don't have user, sign-up"}
+						onPress={() => {
+							setLogState((prevState) => !prevState);
+						}}
+						disabled={disableButton}
+					/>
+				</View>
+			</ScrollView>
 		</KeyboardAvoidingView>
 	);
 };
@@ -351,6 +349,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	buttonStyle: {
+		height: Dimensions.get("screen").height / 20,
 		width: Dimensions.get("screen").width - 40,
 		maxWidth: Dimensions.get("screen").width,
 		paddingVertical: 10,

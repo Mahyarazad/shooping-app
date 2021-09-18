@@ -10,6 +10,7 @@ import {
 	Modal,
 	Text,
 	KeyboardAvoidingView,
+	Animated,
 } from "react-native";
 import CustomButton from "../../components/UI/CustomButton";
 import LoginInput from "../../components/UI/LoginInput";
@@ -18,6 +19,7 @@ import Colors from "../../constants/Colors";
 import firebase from "firebase";
 import ENV from "../../ENV";
 import { ScrollView } from "react-native-gesture-handler";
+import AnimatedImage from "./AnimatedImage";
 
 if (!firebase.apps.length) {
 	firebase.initializeApp(ENV);
@@ -102,17 +104,7 @@ const ResetPassword = (props) => {
 
 	return (
 		<KeyboardAvoidingView style={{ backgroundColor: "white", flex: 1 }}>
-			<ImageBackground
-				style={{
-					width: "100%",
-					height: "100%",
-					position: "absolute",
-				}}
-				//thanks to "Videezy.com" for this awesome animation
-				source={require("../../assets/Grey.png")}
-				resizeMode="cover"
-				imageStyle={{ opacity: 0.7 }}
-			>
+			<AnimatedImage />
 				<ScrollView>
 					{modalStatus && (
 						<View style={styles.centerView}>
@@ -199,7 +191,6 @@ const ResetPassword = (props) => {
 						</View>
 					</View>
 				</ScrollView>
-			</ImageBackground>
 		</KeyboardAvoidingView>
 	);
 };

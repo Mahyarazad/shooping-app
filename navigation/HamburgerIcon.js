@@ -13,32 +13,26 @@ const HamburgerIcon = (props) => {
 	React.useEffect(() => {
 		Animated.spring(containerValue, {
 			toValue: activateIcon ? 1 : 0,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 		Animated.spring(middleBarOpacity, {
 			toValue: activateIcon ? 0 : 1,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 		Animated.spring(topBar, {
 			toValue: activateIcon ? 0.85 : 0,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 		Animated.spring(buttomBar, {
 			toValue: activateIcon ? 0.85 : 0,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 		Animated.spring(topBarMargin, {
 			toValue: activateIcon ? 10 : 0,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 		Animated.spring(buttomBarMargin, {
 			toValue: activateIcon ? -10 : 0,
-			duration: props.duration,
 			useNativeDriver: true,
 		}).start();
 
