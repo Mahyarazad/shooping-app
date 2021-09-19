@@ -285,6 +285,8 @@ const AuthScreen = (props) => {
 				<View style={styles.buttonContainer}>
 					{disableButton ? (
 						<AnimatedDots
+							circleSize ={30}
+							marginSize = {5}
 							container={{
 								...styles.buttonStyle,
 								backgroundColor: "transparent",

@@ -14,6 +14,7 @@ import * as productAction from "../../store/actions/products";
 import Colors from "../../constants/Colors";
 import { addToCart } from "../../store/actions/cart.js";
 import AnimatedView from "../../components/UI/AnimatedView";
+import AnimatedDots from "../../components/UI/AnimatedDots";
 
 
 const ProductOverviewScreen = (props) => {
@@ -23,6 +24,7 @@ const ProductOverviewScreen = (props) => {
 	const [isRefreshing, setIsRefreshing] = React.useState(false);
 	const [errorMessage, setErrorMessage] = React.useState();
 	const [purchaseMessage, setPurchaseMessage] = React.useState(false);
+	const [addToCartLoading, setAddToCardLoading] = React.useState(false);
 
 
 
@@ -123,7 +125,9 @@ const ProductOverviewScreen = (props) => {
 							});
 						}}
 						addToCart={() => {
+							setAddToCardLoading(true)
 							dispatch(cartAction.addToCart(itemData.item));
+							setAddToCardLoading(false)
 						}}
 					>
 						<View style={styles.buttonContainer}>
@@ -148,9 +152,13 @@ const ProductOverviewScreen = (props) => {
 									dispatch(addToCart(itemData.item)), renderPurchaseMessage();
 								}}
 							>
-								<View style={styles.button}>
+								{addToCartLoading ? <AnimatedDots 
+									circleSize ={15}
+									marginSize = {2.5}
+									container={{backgroundColor:'transparent'}}/> : <View style={styles.button}>
 									<Text style={styles.buttonText}> To Cart </Text>
-								</View>
+								</View> }
+								
 							</TouchableOpacity>
 						</View>
 					</ProductItem>

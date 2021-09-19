@@ -19,7 +19,7 @@ import AuthScreen from "../screens/user/AuthScreen";
 import ResetPassword from "../screens/user/ResetPassword";
 import LogoTitle from "./LogoTitle";
 import Header from "./Header";
-
+import ProfileScreen from "../screens/user/ProfileScreen";
 import { toggleDrawer, closeDrawer } from "../store/actions/drawer";
 import { useNavigationContainerRef } from "@react-navigation/native";
 
@@ -251,11 +251,11 @@ const Shop = () => {
 	React.useEffect(() => {
 		const backgoundSubscrption =
 			Notifications.addNotificationResponseReceivedListener((notifications) => {
-				console.log(notifications)
+				console.log(notifications);
 			});
 		const foregoundSubscrption = Notifications.addNotificationReceivedListener(
 			(notifications) => {
-				console.log(notifications)
+				console.log(notifications);
 				const { request } = notifications;
 				//navigationRef.navigate(request.content.data.data);
 			}
@@ -339,6 +339,37 @@ const Shop = () => {
 						options={({ route, navigate }) => ({
 							headerShown: false,
 							headerTitleStyle: { fontFamily: "open-sans" },
+						})}
+					/>
+					<Drawer.Screen
+						name="profile-screen"
+						component={ProfileScreen}
+						
+						options={({ route }) => ({
+							
+							headerTitle: ( props) => {
+								const {userName} = route.params.userData
+								return <LogoTitle {...props} title={userName} />
+								
+							},
+							header: ({ navigation, route, options, back }) => {
+								
+								return (
+									<Header
+										navigation={navigation}
+										options={{
+											iconName: "cart",
+											iconColor: "white",
+											iconSize: 24,
+											onPress() {
+												navigation.navigate("CartScreen");
+											},
+											...options,
+										}}
+										back={back}
+									/>
+								);
+							},
 						})}
 					/>
 				</Drawer.Navigator>

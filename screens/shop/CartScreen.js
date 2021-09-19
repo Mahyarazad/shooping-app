@@ -18,6 +18,8 @@ import {
 import { addOrder } from "../../store/actions/orders";
 import { StackActions } from "@react-navigation/native";
 import Card from "../../components/UI/Card";
+import AnimatedDots from "../../components/UI/AnimatedDots";
+
 
 const CartScreen = (props) => {
 	const totalAmount = useSelector((state) => state.cart.totalAmount);
@@ -54,14 +56,13 @@ const CartScreen = (props) => {
 		<View>
 			<Card style={styles.totalAmount}>
 				<Text style={styles.text}>
-					{" "}
 					Total: $<Text style={styles.price}>{totalAmount.toFixed(2)}</Text>
 				</Text>
 				{isLoading ? (
-					<ActivityIndicator
-						style={{ marginRight: 10 }}
-						color={Colors.primary}
-						size="small"
+					<AnimatedDots
+						circleSize={9}
+						marginSize={1.5}
+						container={styles.button}
 					/>
 				) : (
 					<TouchableOpacity

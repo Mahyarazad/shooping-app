@@ -11,8 +11,8 @@ const AnimatedDots = (props) => {
 	const xAxisDot1 = React.useRef(new Animated.Value(0)).current;
 	const xAxisDot0 = React.useRef(new Animated.Value(0)).current;
 
-	const circleSize = 30; // 
-	const marginSize = 5;  // marginSize should be 1/6 fraction of cricleSize
+	const circleSize = props.circleSize; // 
+	const marginSize = props.marginSize;  // marginSize should be 1/6 fraction of cricleSize
 	const velocity = 1000;
 	const restSpeedThreshold = 10;
 	const backgroundColor = Colors.primary;

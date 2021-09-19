@@ -9,7 +9,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 
 const DrawerContent = (props) => {
-
 	const dispatch = useDispatch();
 	const [userData, setUserData] = React.useState();
 	const userFromAsyncStorage = React.useCallback(async () => {
@@ -29,24 +28,34 @@ const DrawerContent = (props) => {
 	}, [props]);
 
 	const Logout = React.useCallback(async () => {
-	
-		await dispatch(logout());	
+		await dispatch(logout());
 		dispatch(closeDrawer());
 		props.navigation.reset({
 			index: 0,
-			routes: [{ name: 'Product Overview' }],
-		  });
-		
+			routes: [{ name: "Product Overview" }],
+		});
 	}, [dispatch]);
 
 	return (
 		<View style={styles.screen}>
 			<View style={styles.userRow}>
 				{userData && (
-					<Text style={styles.userId}>
-						{userData.email.charAt(0).toUpperCase() +
-							userData.email.slice(1, userData.email.search(/@/))}
-					</Text>
+					<TouchableOpacity
+						onPress={() =>
+							props.navigation.navigate("profile-screen", {
+								userData: {
+									userName:
+										userData.email.charAt(0).toUpperCase() +
+										userData.email.slice(1, userData.email.search(/@/)),
+								},
+							})
+						}
+					>
+						<Text style={styles.userId}>
+							{userData.email.charAt(0).toUpperCase() +
+								userData.email.slice(1, userData.email.search(/@/))}
+						</Text>
+					</TouchableOpacity>
 				)}
 			</View>
 			<View style={styles.row}>
