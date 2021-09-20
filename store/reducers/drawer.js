@@ -1,16 +1,18 @@
-import { CLOSE_DRAWER, TOGGLE_DRAWER } from "../actions/drawer";
+import { CLOSE_DRAWER, TOGGLE_DRAWER, UPDATE_PROFILE } from "../actions/drawer";
 
 const initialState = {
 	drawerStatus: false,
+	uri: undefined,
 };
 
 export const drawerReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case TOGGLE_DRAWER:
-			return { drawerStatus: !state.drawerStatus };
+			return { ...state, drawerStatus: !state.drawerStatus };
 		case CLOSE_DRAWER:
-			return { drawerStatus: false };
-
+			return { ...state, drawerStatus: false };
+		case UPDATE_PROFILE:
+			return { ...state, uri: action.uri };
 		default:
 			return state;
 	}

@@ -279,8 +279,8 @@ const Shop = () => {
 				<Drawer.Navigator
 					screenOptions={{
 						drawerStyle: {
-							backgroundColor: "white",
-							width: 240,
+
+							width: '60%',
 							marginTop: 90,
 							height: "80%",
 							marginVertical: "20%",
@@ -295,7 +295,7 @@ const Shop = () => {
 							color: "black",
 						},
 						drawerActiveTintColor: Colors.primary,
-						drawerActiveBackgroundColor: "white",
+						drawerActiveBackgroundColor: "blue",
 					}}
 					drawerContent={(props) => <DrawerContent {...props} />}
 				>

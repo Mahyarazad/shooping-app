@@ -1,22 +1,47 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import Colors from "../constants/Colors";
 import { logout } from "../store/actions/auth";
 import { closeDrawer } from "../store/actions/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import * as FileSystem from "expo-file-system";
+import { updateProfilePicture } from "../store/actions/drawer";
 
 const DrawerContent = (props) => {
 	const dispatch = useDispatch();
 	const [userData, setUserData] = React.useState();
+	const image = useSelector((state) => state.drawer.uri);
+
 	const userFromAsyncStorage = React.useCallback(async () => {
 		try {
 			const data = await AsyncStorage.getItem("@storage_Key");
 			if (data !== null) {
 				const transformedData = JSON.parse(data);
 				setUserData(transformedData);
+			}
+
+			let userName;
+			try {
+				userName =
+					userData.email.charAt(0).toUpperCase() +
+					userData.email.slice(1, userData.email.search(/@/));
+			} catch (err) {
+				console.log(err);
+			}
+
+			try {
+				const data = await FileSystem.getInfoAsync(
+					FileSystem.documentDirectory + userName + ".jpg"
+				);
+
+				if (typeof image === "undefined") {
+					dispatch(updateProfilePicture(data.uri));
+				}
+			} catch (err) {
+				console.log(err);
 			}
 		} catch (err) {
 			throw new Error(err.message);
@@ -25,7 +50,7 @@ const DrawerContent = (props) => {
 
 	React.useEffect(() => {
 		userFromAsyncStorage();
-	}, [props]);
+	}, [props, image]);
 
 	const Logout = React.useCallback(async () => {
 		await dispatch(logout());
@@ -38,7 +63,28 @@ const DrawerContent = (props) => {
 
 	return (
 		<View style={styles.screen}>
-			<View style={styles.userRow}>
+			<View
+				style={{
+					marginLeft: "30%",
+					marginTop: 40,
+				}}
+			>
+				{image ? (
+					<Image style={styles.imageContainer} source={{ uri: image }} />
+				) : (
+					<Image
+						style={styles.imageContainer}
+						source={require("../assets/profile.jpg")}
+					/>
+				)}
+			</View>
+			<View
+				style={{
+					paddingLeft: "35%",
+					marginTop: 20,
+					marginBottom: 40,
+				}}
+			>
 				{userData && (
 					<TouchableOpacity
 						onPress={() =>
@@ -47,6 +93,7 @@ const DrawerContent = (props) => {
 									userName:
 										userData.email.charAt(0).toUpperCase() +
 										userData.email.slice(1, userData.email.search(/@/)),
+									...userData,
 								},
 							})
 						}
@@ -144,8 +191,9 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 	},
 	userId: {
-		fontFamily: "open-sans",
+		fontFamily: "open-sans-bold",
 		fontSize: 22,
+		color: Colors.primary,
 	},
 	logout: {
 		marginHorizontal: 30,
@@ -154,6 +202,11 @@ const styles = StyleSheet.create({
 	logoutText: {
 		fontFamily: "open-sans",
 		fontSize: 18,
+	},
+	imageContainer: {
+		width: 100,
+		height: 100,
+		borderRadius: 50,
 	},
 });
 

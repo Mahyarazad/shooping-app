@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, LogBox, Alert } from "react-native";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import ReduxThunk from "redux-thunk";
 
@@ -14,6 +14,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
+import { updateProfilePicture } from "./store/actions/drawer";
 
 LogBox.ignoreLogs([
 	"Non-serializable values were found in the navigation state",
@@ -37,7 +38,6 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
-
 	const [loaded] = useFonts({
 		"open-sans": require("./constants/fonts/Glory-Light.ttf"),
 		"open-sans-bold": require("./constants/fonts/Glory-Bold.ttf"),

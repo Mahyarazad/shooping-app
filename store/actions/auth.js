@@ -88,6 +88,9 @@ export const login = (email, password) => {
 							return "We have blocked all requests from this device due to unusual activity. Try again later.";
 					}
 				};
+				if(errResponse.errors){
+					throw new Error((errResponse.errors[0]).message);
+				}
 				throw new Error(messageHandler(errorId));
 			}
 			const resData = await response.json();
