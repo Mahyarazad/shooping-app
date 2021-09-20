@@ -25,10 +25,8 @@ const ProfileScreen = (props) => {
 	const image = useSelector((state) => state.drawer.uri);
 	const dispatch = useDispatch();
 
-
-
 	const handleImage = async () => {
-		const permissionStat = await ImagePicker.requestCameraPermissionsAsync();
+		await ImagePicker.requestCameraPermissionsAsync();
 		const result = await ImagePicker.launchCameraAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: false,
@@ -36,14 +34,11 @@ const ProfileScreen = (props) => {
 			quality: 1,
 		});
 		if (result) {
-			dispatch(
-				updateProfilePicture(result.uri)
-			);
+			dispatch(updateProfilePicture(result.uri));
 			await FileSystem.copyAsync({
 				from: result.uri,
 				to: FileSystem.documentDirectory + userName + ".jpg",
 			});
-			
 		}
 	};
 
@@ -57,7 +52,6 @@ const ProfileScreen = (props) => {
 			return;
 		}
 	};
-
 
 	return (
 		<View style={styles.screen}>
@@ -87,12 +81,18 @@ const ProfileScreen = (props) => {
 				)}
 			</TouchableOpacity>
 			<TouchableOpacity
+				style={styles.touchableOpacity}
 				onPress={handleDeleteImage}
-				style={styles.imageContainer}
 			>
-				<Text> Delete Image</Text>
+				<Text style={styles.textButton}> Delete Image</Text>
 			</TouchableOpacity>
-			<Text style={styles.text}>Click on change the profile Image</Text>
+			<TouchableOpacity
+				style={styles.touchableOpacity}
+				onPress={() => props.navigation.navigate("Product Overview")}
+			>
+				<Text style={styles.textButton}> Address List </Text>
+			</TouchableOpacity>
+			<Text style={{...styles.text, marginTop:5}}>Click on change the profile Image</Text>
 			<View style={styles.switchContainer}>
 				<Switch
 					trackColor={{ false: "#a1a1a1", true: "#a1a1a1" }}
@@ -121,13 +121,11 @@ const ProfileScreen = (props) => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		// flexDirection: "row",
-		// justifyContent: "center",
 		alignItems: "center",
 	},
 	imageContainer: {
 		justifyContent: "center",
-		paddingVertical: "10%",
+		paddingVertical: "5%",
 	},
 	switchContainer: {
 		paddingVertical: "10%",
@@ -138,6 +136,14 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 16,
 		fontFamily: "open-sans",
+	},
+	textButton: {
+		fontSize: 18,
+		fontFamily: "open-sans-bold",
+	},
+
+	touchableOpacity: {
+		marginVertical: 5,
 	},
 });
 

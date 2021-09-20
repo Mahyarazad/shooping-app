@@ -1,14 +1,14 @@
 import React from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import CustomHeaderButton from "../components/UI/CustomHeaderButton";
-import Colors from "../constants/Colors";
-import { logout } from "../store/actions/auth";
-import { closeDrawer } from "../store/actions/drawer";
+import CustomHeaderButton from "../../components/UI/CustomHeaderButton";
+import Colors from "../../constants/Colors";
+import { logout } from "../../store/actions/auth";
+import { closeDrawer } from "../../store/actions/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import * as FileSystem from "expo-file-system";
-import { updateProfilePicture } from "../store/actions/drawer";
+import { updateProfilePicture } from "../../store/actions/drawer";
 
 const DrawerContent = (props) => {
 	const dispatch = useDispatch();
@@ -74,7 +74,7 @@ const DrawerContent = (props) => {
 				) : (
 					<Image
 						style={styles.imageContainer}
-						source={require("../assets/profile.jpg")}
+						source={require("../../assets/profile.jpg")}
 					/>
 				)}
 			</View>

@@ -1,8 +1,8 @@
 import { View, StyleSheet, Text, Dimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import Colors from "../constants/Colors";
-import CustomHeaderButton from "../components/UI/CustomHeaderButton";
+import Colors from "../../constants/Colors";
+import CustomHeaderButton from "../../components/UI/CustomHeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector } from "react-redux";
 import { DrawerActions } from "@react-navigation/native";
