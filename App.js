@@ -1,6 +1,6 @@
 import React from "react";
-import { StyleSheet, LogBox, Alert } from "react-native";
-import { Provider, useDispatch } from "react-redux";
+import { StyleSheet, LogBox } from "react-native";
+import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import ReduxThunk from "redux-thunk";
 
@@ -14,7 +14,16 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
-import { updateProfilePicture } from "./store/actions/drawer";
+import { init } from "./Helper/db";
+
+init()
+	.then(() => {
+		console.log("db initialized");
+	})
+	.catch((err) => {
+		console.log("database initialization failed");
+		console.log(err);
+	});
 
 LogBox.ignoreLogs([
 	"Non-serializable values were found in the navigation state",

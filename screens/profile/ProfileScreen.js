@@ -16,12 +16,14 @@ import * as FileSystem from "expo-file-system";
 import Colors from "../../constants/Colors";
 import { updateProfilePicture } from "../../store/actions/drawer";
 import { useSelector, useDispatch } from "react-redux";
+import { ProfileContext } from "../../navigation/stacks/ProfileStack";
 
-const ProfileScreen = (props) => {
+const ProfileScreen = () => {
+	
+	const fromContext = React.useContext(ProfileContext);
 	const [isEnabled, setIsEnabled] = React.useState(false);
 	const [isEnabled2, setIsEnabled2] = React.useState(false);
-
-	const { userName } = props.route.params.userData;
+	const { userName } = fromContext.route.params.userData;
 	const image = useSelector((state) => state.drawer.uri);
 	const dispatch = useDispatch();
 
@@ -33,12 +35,17 @@ const ProfileScreen = (props) => {
 			aspect: [4, 3],
 			quality: 1,
 		});
+
 		if (result) {
 			dispatch(updateProfilePicture(result.uri));
-			await FileSystem.copyAsync({
-				from: result.uri,
-				to: FileSystem.documentDirectory + userName + ".jpg",
-			});
+			try {
+				await FileSystem.copyAsync({
+					from: result.uri,
+					to: FileSystem.documentDirectory + userName + ".jpg",
+				});
+			} catch (err) {
+				return;
+			}
 		}
 	};
 
@@ -88,11 +95,13 @@ const ProfileScreen = (props) => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.touchableOpacity}
-				onPress={() => props.navigation.navigate("Product Overview")}
+				onPress={() => fromContext.navigation.navigate("address-screen")}
 			>
 				<Text style={styles.textButton}> Address List </Text>
 			</TouchableOpacity>
-			<Text style={{...styles.text, marginTop:5}}>Click on change the profile Image</Text>
+			<Text style={{ ...styles.text, marginTop: 5 }}>
+				Click on change the profile Image
+			</Text>
 			<View style={styles.switchContainer}>
 				<Switch
 					trackColor={{ false: "#a1a1a1", true: "#a1a1a1" }}
@@ -112,7 +121,7 @@ const ProfileScreen = (props) => {
 					}}
 					value={isEnabled2}
 				/>
-				<Text> {props.userName}</Text>
+				<Text> {fromContext.userName}</Text>
 			</View>
 		</View>
 	);

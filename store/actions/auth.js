@@ -33,8 +33,7 @@ export const signUp = (email, password) => {
 
 		if (!response.ok) {
 			const errResponse = await response.json();
-
-			const errorId = errResponse.error.message;
+			const errorId = errResponse.error.errors[0].message;
 			const messageHandler = (id) => {
 				
 				switch (id) {
@@ -46,7 +45,7 @@ export const signUp = (email, password) => {
 						return "We have blocked all requests from this device due to unusual activity. Try again later.";
 				}
 			};
-			throw new Error(messageHandler(errorId));
+			throw new Error(errResponse.error.errors[0].message);
 		}
 		const resData = await response.json();
 
@@ -77,7 +76,7 @@ export const login = (email, password) => {
 
 			if (!response.ok) {
 				const errResponse = await response.json();
-				const errorId = errResponse.error.message;
+				const errorId = errResponse.error.errors[0].message;
 				const messageHandler = (id) => {
 					switch (id) {
 						case "INVALID_EMAIL":
@@ -86,12 +85,11 @@ export const login = (email, password) => {
 							return "Password sign-in is disabled for this project.";
 						case "TOO_MANY_ATTEMPTS_TRY_LATER":
 							return "We have blocked all requests from this device due to unusual activity. Try again later.";
+						
 					}
 				};
-				if(errResponse.errors){
-					throw new Error((errResponse.errors[0]).message);
-				}
-				throw new Error(messageHandler(errorId));
+				
+				throw new Error(errResponse.error.errors[0].message);
 			}
 			const resData = await response.json();
 			dispatch({ type: LOGIN, resData: resData });

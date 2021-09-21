@@ -16,6 +16,7 @@ const DrawerContent = (props) => {
 	const image = useSelector((state) => state.drawer.uri);
 
 	const userFromAsyncStorage = React.useCallback(async () => {
+
 		try {
 			const data = await AsyncStorage.getItem("@storage_Key");
 			if (data !== null) {
@@ -37,7 +38,7 @@ const DrawerContent = (props) => {
 					FileSystem.documentDirectory + userName + ".jpg"
 				);
 
-				if (typeof image === "undefined") {
+				if (typeof image === "undefined") {				
 					dispatch(updateProfilePicture(data.uri));
 				}
 			} catch (err) {
@@ -46,7 +47,7 @@ const DrawerContent = (props) => {
 		} catch (err) {
 			throw new Error(err.message);
 		}
-	}, [userData]);
+	}, [userData,image]);
 
 	React.useEffect(() => {
 		userFromAsyncStorage();
@@ -88,14 +89,16 @@ const DrawerContent = (props) => {
 				{userData && (
 					<TouchableOpacity
 						onPress={() =>
-							props.navigation.navigate("profile-screen", {
+							props.navigation.navigate("profile",
+							{
 								userData: {
 									userName:
 										userData.email.charAt(0).toUpperCase() +
 										userData.email.slice(1, userData.email.search(/@/)),
 									...userData,
 								},
-							})
+							}
+							)
 						}
 					>
 						<Text style={styles.userId}>

@@ -13,7 +13,7 @@ import Colors from "../constants/Colors";
 
 import LogoTitle from "./navigation-components/LogoTitle";
 import Header from "./navigation-components/Header";
-import ProfileScreen from "../screens/user/ProfileScreen";
+import ProfileScreen from "../screens/profile/ProfileScreen";
 import { toggleDrawer, closeDrawer } from "../store/actions/drawer";
 import { useNavigationContainerRef } from "@react-navigation/native";
 
@@ -22,7 +22,7 @@ import * as Notifications from "expo-notifications";
 import ShopNavigator from './stacks/ShopStack';
 import AuthNavigator from './stacks/AuthStack';
 import UserNavigator from './stacks/UserStack';
-
+import ProfileNavigator from './stacks/ProfileStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -165,36 +165,14 @@ const Shop = () => {
 						})}
 					/>
 					<Drawer.Screen
-						name="profile-screen"
-						component={ProfileScreen}
-						
-						options={({ route }) => ({
-							
-							headerTitle: ( props) => {
-								const {userName} = route.params.userData
-								return <LogoTitle {...props} title={userName} />
-								
-							},
-							header: ({ navigation, route, options, back }) => {
-								
-								return (
-									<Header
-										navigation={navigation}
-										options={{
-											iconName: "cart",
-											iconColor: "white",
-											iconSize: 24,
-											onPress() {
-												navigation.navigate("CartScreen");
-											},
-											...options,
-										}}
-										back={back}
-									/>
-								);
-							},
+						name="profile"
+						component={ProfileNavigator}
+						options={({ route, navigate }) => ({
+							headerShown: false,
+							headerTitleStyle: { fontFamily: "open-sans" },
 						})}
 					/>
+					
 				</Drawer.Navigator>
 			)}
 		</NavigationContainer>
