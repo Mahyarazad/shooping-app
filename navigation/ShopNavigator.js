@@ -2,57 +2,51 @@ import React from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
-import { NavigationContainer, StackActions } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import * as Notifications from "expo-notifications";
 
-import OrdersScreen from "../screens/shop/OrdersScreen";
-import LandingScreen from "../screens/LandScreen";
 import DrawerContent from "./navigation-components/DrawerContent";
-import Colors from "../constants/Colors";
-
 import LogoTitle from "./navigation-components/LogoTitle";
 import Header from "./navigation-components/Header";
-import ProfileScreen from "../screens/profile/ProfileScreen";
+import Colors from "../constants/Colors";
 import { toggleDrawer, closeDrawer } from "../store/actions/drawer";
 import { useNavigationContainerRef } from "@react-navigation/native";
 
-import * as Notifications from "expo-notifications";
-
-import ShopNavigator from './stacks/ShopStack';
-import AuthNavigator from './stacks/AuthStack';
-import UserNavigator from './stacks/UserStack';
-import ProfileNavigator from './stacks/ProfileStack';
+import ShopNavigator from "./stacks/ShopStack";
+import AuthNavigator from "./stacks/AuthStack";
+import UserNavigator from "./stacks/UserStack";
+import ProfileNavigator from "./stacks/ProfileStack";
+import OrdersScreen from "../screens/shop/OrdersScreen";
 
 const Drawer = createDrawerNavigator();
-
 
 const Shop = () => {
 	const navigationRef = useNavigationContainerRef();
 	const containerRef = React.useRef();
-
-	// const [authState, setAuthState] = React.useState(true);
 	const authData = useSelector((state) => state.auth.auth);
 	const dispatch = useDispatch();
 
-	const autoLogin = React.useCallback(async () => {
-		await dispatch(authActions.isLoggedIn());
-	}, [dispatch, authActions]);
+	const isMounted = React.useRef(false);
+
+	const autoLogin = async () => {
+		if (isMounted.current) {
+			setTimeout(() => {
+				dispatch(authActions.isLoggedIn());
+			}, 25);
+		}
+	};
 
 	React.useEffect(() => {
-		// let isMounted = true;
-		// if (isMounted) {
-
-		// }
-
-		autoLogin();
-		if (authData) {
-			dispatch(authActions.authenticate());
+		isMounted.current = true;
+		{
+			isMounted &&
+				autoLogin().then(() => {
+					if (authData) dispatch(authActions.authenticate());
+				});
 		}
-		// return () => {
-		// 	isMounted = false;
-		// };
-	}, [authData, dispatch, authActions, autoLogin]);
+		return () => (isMounted.current = false);
+	}, [authData]);
 
 	React.useEffect(() => {
 		navigationRef.addListener("state", (e) => {
@@ -96,14 +90,12 @@ const Shop = () => {
 				containerRef.current = navigationRef;
 			}}
 		>
-			{!authData ? (
-				<AuthNavigator />
-			) : (
+			{!authData ? <AuthNavigator />
+			:
 				<Drawer.Navigator
 					screenOptions={{
 						drawerStyle: {
-
-							width: '60%',
+							width: "60%",
 							marginTop: 90,
 							height: "80%",
 							marginVertical: "20%",
@@ -172,9 +164,8 @@ const Shop = () => {
 							headerTitleStyle: { fontFamily: "open-sans" },
 						})}
 					/>
-					
 				</Drawer.Navigator>
-			)}
+			}
 		</NavigationContainer>
 	);
 };

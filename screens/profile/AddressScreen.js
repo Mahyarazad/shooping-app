@@ -35,7 +35,9 @@ const AddressScreen = (props) => {
 	const handleSubmit = () => {
 		dbActions
 			.insertAddress(new Date().toLocaleDateString(), inputAddress, 50.05, 50.5)
-			.then((res) => {})
+			.then((res) => {
+				setInputAddress(null)
+			})
 			.catch((err) => {
 				console.log(err);
 				Alert.alert("Wrong Input", "Input cannot be empty", [{ text: "OK" }]);
@@ -74,6 +76,7 @@ const AddressScreen = (props) => {
 			</View>
 
 			<FlatList
+				keyExtractor={(item, index) => index.toString(2)}
 				data={addressList}
 				renderItem={(itemData) => (
 					<View style={styles.listView}>

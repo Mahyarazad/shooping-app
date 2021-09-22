@@ -16,7 +16,6 @@ const DrawerContent = (props) => {
 	const image = useSelector((state) => state.drawer.uri);
 
 	const userFromAsyncStorage = React.useCallback(async () => {
-
 		try {
 			const data = await AsyncStorage.getItem("@storage_Key");
 			if (data !== null) {
@@ -38,7 +37,7 @@ const DrawerContent = (props) => {
 					FileSystem.documentDirectory + userName + ".jpg"
 				);
 
-				if (typeof image === "undefined") {				
+				if (typeof image === "undefined") {
 					dispatch(updateProfilePicture(data.uri));
 				}
 			} catch (err) {
@@ -47,7 +46,7 @@ const DrawerContent = (props) => {
 		} catch (err) {
 			throw new Error(err.message);
 		}
-	}, [userData,image]);
+	}, [userData, image]);
 
 	React.useEffect(() => {
 		userFromAsyncStorage();
@@ -71,12 +70,38 @@ const DrawerContent = (props) => {
 				}}
 			>
 				{image ? (
-					<Image style={styles.imageContainer} source={{ uri: image }} />
+					<TouchableOpacity
+						onPress={() =>
+							props.navigation.navigate("profile", {
+								userData: {
+									userName:
+										userData.email.charAt(0).toUpperCase() +
+										userData.email.slice(1, userData.email.search(/@/)),
+									...userData,
+								},
+							})
+						}
+					>
+						<Image style={styles.imageContainer} source={{ uri: image }} />
+					</TouchableOpacity>
 				) : (
-					<Image
-						style={styles.imageContainer}
-						source={require("../../assets/profile.jpg")}
-					/>
+					<TouchableOpacity
+						onPress={() =>
+							props.navigation.navigate("profile", {
+								userData: {
+									userName:
+										userData.email.charAt(0).toUpperCase() +
+										userData.email.slice(1, userData.email.search(/@/)),
+									...userData,
+								},
+							})
+						}
+					>
+						<Image
+							style={styles.imageContainer}
+							source={require("../../assets/profile.jpg")}
+						/>
+					</TouchableOpacity>
 				)}
 			</View>
 			<View
@@ -89,16 +114,14 @@ const DrawerContent = (props) => {
 				{userData && (
 					<TouchableOpacity
 						onPress={() =>
-							props.navigation.navigate("profile",
-							{
+							props.navigation.navigate("profile", {
 								userData: {
 									userName:
 										userData.email.charAt(0).toUpperCase() +
 										userData.email.slice(1, userData.email.search(/@/)),
 									...userData,
 								},
-							}
-							)
+							})
 						}
 					>
 						<Text style={styles.userId}>
