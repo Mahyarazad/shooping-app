@@ -7,12 +7,14 @@ import {
 	Text,
 	Alert,
 	ActivityIndicator,
+	Dimensions,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
 import Colors from "../../constants/Colors";
 import { deleteProduct } from "../../store/actions/products";
 import * as productActions from "../../store/actions/products";
+import AnimatedDots from "../../components/UI/AnimatedDots";
 
 const UserProductScreen = (props) => {
 	const products = useSelector((state) => state.products.userProducts);
@@ -36,7 +38,7 @@ const UserProductScreen = (props) => {
 	React.useEffect(() => {
 		const refetchProducts = props.navigation.addListener("focus", loadProducts);
 		return () => {
-			refetchProducts
+			refetchProducts;
 		};
 	}, [loadProducts]);
 
@@ -71,7 +73,14 @@ const UserProductScreen = (props) => {
 	if (isLoading) {
 		return (
 			<View style={styles.centered}>
-				<ActivityIndicator size="large" color={Colors.primary} />
+				<AnimatedDots
+					circleSize={30}
+					marginSize={5}
+					container={{
+						...styles.animatedDotsStyle,
+						backgroundColor: "transparent",
+					}}
+				/>
 			</View>
 		);
 	}
@@ -150,8 +159,17 @@ const styles = StyleSheet.create({
 		borderRadius: 3,
 	},
 	buttonText: {
+		fontFamily: "open-sans-bold",
 		color: Colors.primary,
-		fontSize: 16,
+		fontSize: 18,
+	},
+	animatedDotsStyle: {
+		height: Dimensions.get("screen").height / 20,
+		width: Dimensions.get("screen").width - 40,
+		maxWidth: Dimensions.get("screen").width,
+		paddingVertical: 10,
+		marginVertical: 2,
+		borderRadius: 10,
 	},
 });
 

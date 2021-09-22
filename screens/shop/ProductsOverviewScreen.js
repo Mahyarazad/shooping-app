@@ -5,7 +5,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	Text,
-	ActivityIndicator,
+	Dimensions,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
@@ -81,7 +81,14 @@ const ProductOverviewScreen = (props) => {
 	if (isLoading) {
 		return (
 			<AnimatedView style={styles.centered}>
-				<ActivityIndicator size="large" color={Colors.primary} />
+				<AnimatedDots
+							circleSize ={30}
+							marginSize = {5}
+							container={{
+								...styles.animatedDotsStyle,
+								backgroundColor: "transparent",
+							}}
+						/>
 			</AnimatedView>
 		);
 	}
@@ -187,8 +194,8 @@ const styles = StyleSheet.create({
 	},
 	buttonText: {
 		color: Colors.primary,
-		fontSize: 16,
-		fontFamily: "open-sans",
+		fontSize: 17,
+		fontFamily: "open-sans-bold",
 	},
 	emptyScreen: {
 		fontFamily: "open-sans",
@@ -202,6 +209,14 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		textAlign: "center",
 	},
+	animatedDotsStyle:{
+		height: Dimensions.get("screen").height / 20,
+		width: Dimensions.get("screen").width - 40,
+		maxWidth: Dimensions.get("screen").width,
+		paddingVertical: 10,
+		marginVertical: 2,
+		borderRadius: 10,
+	}
 });
 
 export default ProductOverviewScreen;

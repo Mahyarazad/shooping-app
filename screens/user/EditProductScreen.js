@@ -5,11 +5,12 @@ import {
 	KeyboardAvoidingView,
 	Alert,
 	ScrollView,
-	ActivityIndicator,
+	Dimensions,
 } from "react-native";
 import Input from "../../components/UI/Input";
 import { useDispatch } from "react-redux";
 import { updateProduct, createProduct } from "../../store/actions/products";
+import AnimatedDots from "../../components/UI/AnimatedDots";
 
 const UPDATE_FORM_INPUT = "UPDATE_FORM_INPUT";
 
@@ -129,7 +130,14 @@ const EditProductScreen = (props) => {
 	if (isLoading) {
 		return (
 			<View style={styles.centered}>
-				<ActivityIndicator color="gray" size="large" />
+				<AnimatedDots
+					circleSize={30}
+					marginSize={5}
+					container={{
+						...styles.animatedDotsStyle,
+						backgroundColor: "transparent",
+					}}
+				/>
 			</View>
 		);
 	}
@@ -139,11 +147,7 @@ const EditProductScreen = (props) => {
 			<ScrollView>
 				<View style={styles.screen}>
 					<Input
-						input={{
-							borderBottomColor: "gray",
-							borderBottomWidth: 1,
-							paddingTop: 4,
-						}}
+						input={styles.inputStyle}
 						id="title"
 						label="Title"
 						errorMessage="Please enter a valid title!"
@@ -159,11 +163,7 @@ const EditProductScreen = (props) => {
 					/>
 
 					<Input
-						input={{
-							borderBottomColor: "gray",
-							borderBottomWidth: 1,
-							paddingTop: 4,
-						}}
+						input={styles.inputStyle}
 						id="imageUrl"
 						ref={ref_input1}
 						onSubmitEditing={() => ref_input2.current.focus()}
@@ -177,11 +177,7 @@ const EditProductScreen = (props) => {
 						required
 					/>
 					<Input
-						input={{
-							borderBottomColor: "gray",
-							borderBottomWidth: 1,
-							paddingTop: 4,
-						}}
+						input={styles.inputStyle}
 						ref={ref_input2}
 						onSubmitEditing={() => ref_input3.current.focus()}
 						id="price"
@@ -197,11 +193,7 @@ const EditProductScreen = (props) => {
 						min={1}
 					/>
 					<Input
-						input={{
-							borderBottomColor: "gray",
-							borderBottomWidth: 1,
-							paddingTop: 4,
-						}}
+						input={styles.inputStyle}
 						ref={ref_input3}
 						id="description"
 						label="Description"
@@ -231,6 +223,21 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		paddingBottom: 10,
 	},
+	inputStyle: {
+		fontFamily: "open-sans",
+		fontSize: 18,
+		borderBottomColor: "gray",
+		borderBottomWidth: 1,
+		paddingTop: 4,
+	},
+	animatedDotsStyle:{
+		height: Dimensions.get("screen").height / 20,
+		width: Dimensions.get("screen").width - 40,
+		maxWidth: Dimensions.get("screen").width,
+		paddingVertical: 10,
+		marginVertical: 2,
+		borderRadius: 10,
+	}
 });
 
 export default EditProductScreen;

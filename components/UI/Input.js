@@ -73,18 +73,18 @@ const Input = (props, ref) => {
 	};
 
 	return (
-		<View style={styles.screen, {...props.screen}}>
-			<Text style={styles.text, {...props.labelStyle}}>{props.label}</Text>
+		<View style={{...styles.screen, ...props.screen}}>
+			<Text style={{...styles.text, ...props.labelStyle}}>{props.label}</Text>
 			<TextInput
 				ref={ref}
 				{...props}
-				style={styles.input,{...props.input}}
+				style={{...styles.input,...props.input}}
 				onChangeText={handelInputChange}
 				value={inputState.value}
 				onBlur={handleFocusChange}
 			/>
 			{!inputState.isValid && inputState.touched && (
-				<View style={styles.errorContainer, {...props.errorContainer}}>
+				<View style={{...styles.errorContainer, ...props.errorContainer}}>
 					<Text style={styles.textError}> {props.errorMessage} </Text>
 				</View>
 			)}
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
 		marginVertical: 5,
 	},
 	text: {
-		fontSize: 14,
+		fontSize: 20,
 		fontFamily: "open-sans-bold",
 	},
 	input: {
