@@ -46,7 +46,19 @@ const ShopNavigator = () => {
 					),
 					header: ({ navigation, route, options, back }) => {
 						return (
-							<Header navigation={navigation} options={options} back={back} />
+							<Header
+								navigation={navigation}
+								options={{
+									iconName: "cart",
+									iconColor: "white",
+									iconSize: 24,
+									onPress() {
+										navigation.navigate("CartScreen");
+									},
+									...options,
+								}}
+								back={back}
+							/>
 						);
 					},
 				})}

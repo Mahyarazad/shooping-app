@@ -9,9 +9,9 @@ import { DrawerActions } from "@react-navigation/native";
 import HamburgerIcon from "./HamburgerIcon";
 
 const Header = ({ navigation, route, options, back }) => {
-	
 	const drawerStatus = useSelector((state) => state.drawer.drawerStatus);
-	
+	const cartStat = useSelector((state) => state.cart.item);
+
 	const [titleText, setTitleText] = React.useState(
 		options.headerTitle().props.title
 	);
@@ -24,7 +24,6 @@ const Header = ({ navigation, route, options, back }) => {
 
 	React.useEffect(() => {
 		handleLength();
-		
 	}, [titleText, drawerStatus]);
 
 	return (
@@ -42,14 +41,14 @@ const Header = ({ navigation, route, options, back }) => {
 				) : (
 					titleText !== "Authenticate" &&
 					titleText !== "Reset Password" && (
-
-						<HamburgerIcon 
+						<HamburgerIcon
 							hamburgerWidth={27}
 							hamburgerLine={4}
 							burgerMargin={3}
 							marginFromTop={30}
 							activateIcon={drawerStatus}
-							onPress={()=>navigation.dispatch(DrawerActions.openDrawer())}/>
+							onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+						/>
 					)
 				)}
 			</View>
@@ -67,6 +66,14 @@ const Header = ({ navigation, route, options, back }) => {
 						onPress={options.onPress}
 					></Item>
 				</HeaderButtons>
+
+				{Object.keys(cartStat)[0] !== undefined && options.iconName === "cart" && (
+					<View style={styles.badge}>
+						<Text style={styles.badgeText}>
+							{Object.keys(cartStat)?.length}
+						</Text>
+					</View>
+				)}
 			</View>
 		</View>
 	);
@@ -98,6 +105,24 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		right: 10,
 		top: paddingFromTop,
+	},
+	badge: {
+		alignItems: "center",
+		justifyContent: "center",
+		width: Dimensions.get("screen").width / 25,
+		height: Dimensions.get("screen").width / 25,
+		borderRadius: Dimensions.get("screen").width / 50,
+		backgroundColor: Colors.primary,
+		borderWidth: 1,
+		borderColor: "white",
+		transform: [
+			{ translateX: Dimensions.get("screen").width / 15 },
+			{ translateY: -Dimensions.get("screen").width / 15 },
+		],
+	},
+	badgeText: {
+		fontFamily: "open-sans-bold",
+		color: "white",
 	},
 });
 
