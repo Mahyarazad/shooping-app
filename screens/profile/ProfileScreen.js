@@ -16,14 +16,17 @@ import * as FileSystem from "expo-file-system";
 import Colors from "../../constants/Colors";
 import { updateProfilePicture } from "../../store/actions/drawer";
 import { useSelector, useDispatch } from "react-redux";
-import { ProfileContext } from "../../navigation/stacks/ProfileStack";
 
-const ProfileScreen = () => {
+
+const ProfileScreen = (props) => {
 	
-	const fromContext = React.useContext(ProfileContext);
+
+	const authData = useSelector(state=>state.auth)
+	const { email } = authData
+	const userName =
+		email.charAt(0).toUpperCase() + email.slice(1, email.search(/@/));
 	const [isEnabled, setIsEnabled] = React.useState(false);
 	const [isEnabled2, setIsEnabled2] = React.useState(false);
-	const { userName } = fromContext.route.params.userData;
 	const image = useSelector((state) => state.drawer.uri);
 	const dispatch = useDispatch();
 
@@ -95,7 +98,7 @@ const ProfileScreen = () => {
 			</TouchableOpacity>
 			<TouchableOpacity
 				style={styles.touchableOpacity}
-				onPress={() => fromContext.navigation.navigate("address-screen")}
+				onPress={() => props.navigation.navigate("address-screen")}
 			>
 				<Text style={styles.textButton}> Address List </Text>
 			</TouchableOpacity>
@@ -121,7 +124,7 @@ const ProfileScreen = () => {
 					}}
 					value={isEnabled2}
 				/>
-				<Text> {fromContext.userName}</Text>
+				<Text> Just for Fun {userName}</Text>
 			</View>
 		</View>
 	);

@@ -12,6 +12,7 @@ import orderReducer from "./store/reducers/orders";
 import { drawerReducer } from "./store/reducers/drawer";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { authReducer } from "./store/reducers/auth";
+import { userInfoReducer } from "./store/reducers/userInfo";
 import { StatusBar } from "expo-status-bar";
 import * as Notifications from "expo-notifications";
 import { init } from "./Helper/db";
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
 	order: orderReducer,
 	auth: authReducer,
 	drawer: drawerReducer,
+	userInfo: userInfoReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

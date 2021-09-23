@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Dimensions,TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import Colors from "../../constants/Colors";
@@ -57,7 +57,7 @@ const Header = ({ navigation, route, options, back }) => {
 				<Text style={styles.titleText}>{titleText}</Text>
 			</View>
 
-			<View style={styles.buttonContainer}>
+			<TouchableOpacity style={styles.buttonContainer} onPress={options.onPress}>
 				<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
 					<Item
 						iconName={options.iconName}
@@ -74,7 +74,7 @@ const Header = ({ navigation, route, options, back }) => {
 						</Text>
 					</View>
 				)}
-			</View>
+			</TouchableOpacity>
 		</View>
 	);
 };

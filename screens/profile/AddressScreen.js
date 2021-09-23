@@ -13,44 +13,36 @@ import * as dbActions from "../../Helper/db";
 import moment from "moment";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
+import { useSelector, useDispatch } from "react-redux";
+import * as addressActions from "../../store/actions/userInfo";
+import AddressFlatList from "../../components/UI/AddressFlatList";
 
 const AddressScreen = (props) => {
+
 	const [inputAddress, setInputAddress] = React.useState(null);
-	const [addressList, setAddressList] = React.useState([]);
+	const addressList = useSelector((state) => state.userInfo.addressList);
+	const dispatch = useDispatch();
+
 	const handleTextInput = (value) => {
 		setInputAddress(value);
 	};
 
-	const fetchAddressList = async () => {
-		try {
-			const dbResult = await dbActions.fetchAddress();
-			if (dbResult) {
-				setAddressList(dbResult.rows._array);
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	};
-
-	const handleSubmit = () => {
-		dbActions
-			.insertAddress(new Date().toLocaleDateString(), inputAddress, 50.05, 50.5)
-			.then((res) => {
-				setInputAddress(null)
-			})
-			.catch((err) => {
-				console.log(err);
-				Alert.alert("Wrong Input", "Input cannot be empty", [{ text: "OK" }]);
-				return;
-			});
-		fetchAddressList();
+	const fetchAddressList = () => {
+		dispatch(addressActions.fetchAddress());
 	};
 
 	const handleDelete = (id) => {
-		dbActions
-			.deleteAddress(id)
-			.then((res) => console.log(res))
-			.catch((err) => console.log(err));
+		dispatch(addressActions.deleteAddress(id));
+		fetchAddressList();
+	};
+
+	const handleSubmit = () => {
+		if (inputAddress === null) {
+			Alert.alert("Wrong Input", "Input cannot be empty", [{ text: "OK" }]);
+			return;
+		}
+		dispatch(addressActions.insertAddress(inputAddress));
+		setInputAddress(null);
 		fetchAddressList();
 	};
 
@@ -74,25 +66,10 @@ const AddressScreen = (props) => {
 					<Text style={styles.addAddress}> Add Address </Text>
 				</TouchableOpacity>
 			</View>
-
-			<FlatList
-				keyExtractor={(item, index) => index.toString(2)}
-				data={addressList}
-				renderItem={(itemData) => (
-					<View style={styles.listView}>
-						<View style={{ justifyContent: "center" }}>
-							<Text style={styles.listItem}>{itemData.item.address}</Text>
-						</View>
-
-						<TouchableOpacity
-							style={styles.delete}
-							onPress={handleDelete.bind(this, itemData.item.id)}
-						>
-							<Ionicons name="close-outline" size={40} color={Colors.primary} />
-						</TouchableOpacity>
-					</View>
-				)}
-			/>
+			<AddressFlatList 
+				iconName='close-outline'
+				addressData={addressList} 
+				addressID={handleDelete} />
 		</View>
 	);
 };
@@ -118,24 +95,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		alignItems: "center",
 	},
-	listView: {
-		flexDirection: "row",
-		width: Dimensions.get("screen").width * 0.9,
-		height: Dimensions.get("screen").height * 0.1,
-		alignItems: "center",
-		justifyContent: "space-between",
-		borderBottomWidth: 1,
-		borderBottomColor: "gray",
-	},
-	listItem: {
-		width: Dimensions.get("screen").width * 0.8,
-		fontFamily: "open-sans",
-		fontSize: 19,
-	},
-	delete: {
-		width: Dimensions.get("screen").width * 0.1,
-	},
-
 	addAddress: {
 		fontFamily: "open-sans-bold",
 		fontSize: 22,
