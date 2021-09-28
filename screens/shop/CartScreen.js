@@ -73,9 +73,9 @@ const CartScreen = (props) => {
 
 		item.map((e) => {
 			itemQuantity += e.quantity
-			itemHTML += `<tr><td">${e.productTitle}</td><td>${e.productPrice}</td><td>${e.quantity}</td><td>${e.sum}</td></tr>`;
+			itemHTML += `<tr><td">${e.productTitle}</td><td>$${e.productPrice}</td><td>${e.quantity}</td><td>$${e.sum}</td></tr>`;
 		});
-		totalitemHTML = `<tr><td"><b>Total Amount</b></td><td></td><td><b>${itemQuantity}</b></td><td><b>${totalAmount}</b></td></tr>`;
+		totalitemHTML = `<tr><td"><b>Total Amount</b></td><td></td><td><b>${itemQuantity}</b></td><td><b>$${totalAmount}</b></td></tr>`;
 		dispatch(addOrder(item, totalAmount, object["address"])).then((resData) => {
 			const { orderData } = resData;
 
