@@ -52,6 +52,12 @@ const ProfileNavigator = (props) => {
 								<Header
 									navigation={navigation}
 									options={{
+										iconName: "cart",
+										iconColor: "white",
+										iconSize: 24,
+										onPress() {
+											navigation.navigate("Products",{screen:"CartScreen"});
+										},
 										...options,
 									}}
 									back={back}

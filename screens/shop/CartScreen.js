@@ -23,7 +23,10 @@ import Card from "../../components/UI/Card";
 import AnimatedDots from "../../components/UI/AnimatedDots";
 import * as addressActions from "../../store/actions/userInfo";
 import AddressFlatList from "../../components/UI/AddressFlatList";
-import ENV from '../../ENV'
+import ENV from '../../ENV';
+import {MaterialIcons} from '@expo/vector-icons';
+
+
 var AWS = require("aws-sdk");
 
 AWS.config.update({
@@ -37,7 +40,6 @@ const ses = new AWS.SES({ apiVersion: "2010-12-01" });
 const CartScreen = (props) => {
 	const { totalAmount } = useSelector((state) => state.cart);
 	const { email } = useSelector((state) => state.auth);
-	const { orders } = useSelector((state) => state.order);
 	const [selectAddressModal, setSelectAddressModal] = React.useState(false);
 	const [isLoading, setIsLoading] = React.useState(false);
 	const dispatch = useDispatch();
@@ -166,6 +168,13 @@ const CartScreen = (props) => {
 							>
 								Please chose the delivery address
 							</Text>
+							<TouchableOpacity onPress={()=>{
+										setSelectAddressModal(false),
+										props.navigation.navigate("profile", {screen:"address-screen"})
+									}
+								}>
+								<MaterialIcons name="add-circle-outline" size={24} color="white"/>	
+							</TouchableOpacity>	
 						</View>
 
 						<AddressFlatList
@@ -288,9 +297,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	modalText: {
+		flexDirection:'row',
 		backgroundColor: "rgba(52, 52, 52, 0.9)",
 		height: Dimensions.get("screen").height * 0.07,
-		justifyContent: "center",
+		justifyContent: "space-evenly",
 		alignItems: "center",
 	},
 	animatedDotsStyle:{

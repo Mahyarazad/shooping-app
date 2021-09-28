@@ -102,11 +102,11 @@ const ProductOverviewScreen = (props) => {
 	}
 
 	return (
-		<View>
+		<View style={{alignItems:'center'}}>
 			{purchaseMessage ? (
 				<AnimatedView
 					duration={300}
-					style={{ height: 30, backgroundColor: "white" }}
+					style={{ height: 30, backgroundColor: "rgba(255, 130, 5, 1)",justifyContent:'center', borderRadius: 10, width: '60%' }}
 				>
 					<Text style={styles.purchaseMessage}> Added to cart </Text>
 				</AnimatedView>
@@ -206,9 +206,9 @@ const styles = StyleSheet.create({
 		paddingBottom: 10,
 	},
 	purchaseMessage: {
-		fontFamily: "open-sans-bold",
-		color: "black",
-		fontSize: 18,
+		fontFamily: "open-sans",
+		color: "white",
+		fontSize: 22,
 		textAlign: "center",
 	},
 	animatedDotsStyle:{
