@@ -4,7 +4,7 @@ export const REMOVE_ORDER = "REMOVE_ORDER";
 export const SET_ORDER = "SER_ORDER";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ENV from "../../ENV";
-export const addOrder = (cartItem, totalAmount) => {
+export const addOrder = (cartItem, totalAmount, address) => {
 	return async (dispatch, getState) => {
 		let token = getState().auth.idToken;
 
@@ -32,6 +32,7 @@ export const addOrder = (cartItem, totalAmount) => {
 						items: { ...cartItem },
 						amount: totalAmount,
 						date: date,
+						address: address
 					}),
 				}
 			);
@@ -62,6 +63,7 @@ export const addOrder = (cartItem, totalAmount) => {
 					amount: totalAmount,
 					id: resData.name,
 					date: date,
+					address:address
 				},
 			});
 		} catch (err) {
@@ -139,7 +141,8 @@ export const fetchOrders = () => {
 					key,
 					resData[key].items,
 					resData[key].amount,
-					resData[key].date
+					resData[key].date,
+					resData[key].address,
 				)
 			);
 		}

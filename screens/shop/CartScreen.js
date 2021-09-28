@@ -24,16 +24,27 @@ import AnimatedDots from "../../components/UI/AnimatedDots";
 import * as addressActions from "../../store/actions/userInfo";
 import AddressFlatList from "../../components/UI/AddressFlatList";
 
+var AWS = require("aws-sdk");
+AWS.config.update({
+	accessKeyId: "AKIA6F2RW7IPKGEDESK6",
+	secretAccessKey: "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",
+	region: "eu-central-1",
+});
+
+const ses = new AWS.SES({ apiVersion: "2010-12-01" });
+
 const CartScreen = (props) => {
-	const totalAmount = useSelector((state) => state.cart.totalAmount);
+	const { totalAmount } = useSelector((state) => state.cart);
+	const { email } = useSelector((state) => state.auth);
+	const { orders } = useSelector((state) => state.order);
 	const [selectAddressModal, setSelectAddressModal] = React.useState(false);
 	const [isLoading, setIsLoading] = React.useState(false);
 	const dispatch = useDispatch();
 	const addressInfo = useSelector((state) => state.userInfo.addressList);
 
-	const fetchAddressList = () => {
+	const fetchAddressList = React.useCallback(() => {
 		dispatch(addressActions.fetchAddress());
-	};
+	}, [addressInfo]);
 
 	const item = useSelector((state) => {
 		const itemArray = [];
@@ -51,17 +62,62 @@ const CartScreen = (props) => {
 		return itemArray.sort((a, b) => (a.productId > b.productId ? 1 : -1));
 	});
 
-	const addressJs = (object) => {
-		// console.log(object);
+	const addressJs = async (object) => {
+		setIsLoading(true);
 		setSelectAddressModal(false);
+
+		let itemHTML = "";
+		item.map((e) => {
+			itemHTML += `<tr><td">${e.productTitle}</td><td>${e.productPrice}</td><td>${e.quantity}</td><td>${e.sum}</td></tr>`;
+		});
+		dispatch(addOrder(item, totalAmount, object["address"])).then((resData) => {
+			const { orderData } = resData;
+
+			let params = {
+				// send to list
+				Destination: {
+					ToAddresses: [email],
+				},
+				Message: {
+					Body: {
+						Html: {
+							Charset: "UTF-8",
+							Data:`<!DOCTYPE html><html> <head> <link href="https://fonts.googleapis.com/css2?family=Glory:wght@100&display=swap" rel="stylesheet"> <style>.container{font-family: 'Glory', sans-serif; height: 100%; display:grid; grid-template-columns: 0.4fr ; grid-template-rows: 0.5fr 0.35fr 1fr; grid-template-areas: "header" "order-container" "table-container";}.header{grid-area: header; grid-row-start:1 ; grid-column: 1; place-self: center;}.order-container{grid-area: orderDetail; grid-row-start:2 ; grid-column: 1; align-self: start;}.table-container{grid-area: table-container; grid-row-start:3 ; grid-column: 1; overflow: hidden; align-self: start;}.image{}p.bigger{margin-bottom: 0; font-size: 3.5em; text-align: center;}p.smaller{text-align: center; font-size: 2em;}p.text{font-size: 1.5em; text-align: center;}table{width: 100%; font-size: 1em; border:0.1em solid black; border-radius: 0.2em;}tr{text-align: center; border:0.1em solid black;}th{font-size: 1em;}</style> </head> <body> <div class="container"> <div class="header"> <p class="bigger"> <b>Your order placed</b> </p><p class="smaller"> <b>Thanks for your purchase</b></p><img class="image" src="https://cdn2.tychesoftwares.com/wp-content/uploads/2018/03/14061445/Reduce-Shopping-Cart-Abandonment.png" alt="featured-thumbnail"/> </div><div class="order-container"> <p class="text"> <b> Order ID: </b>${orderData.id}</p><p class="text"><b> Delivery Address: </b>${object['address']}</p><p class="text" style="margin-bottom: 1em;"> <b> Total Amount: </b>${orderData.amount.toFixed(2)}</p></div><div class="table-container"> <table cellspacing="0"> <tr> <th> Product Name</th> <th> Unit Price </th> <th> Quantity </th> <th> Total</th> </tr>${itemHTML}</table> </div></div></body></html>`,
+						},
+					},
+
+					Subject: {
+						Charset: "UTF-8",
+						Data: "Purchased Confirmed",
+					},
+				},
+				Source: "mhyrinc@gmail.com", // must relate to verified SES account
+				ReplyToAddresses: ["mhyrinc@gmail.com"],
+			};
+
+			
+			ses.sendEmail(params, (err, data) => {
+				if (err) {
+					Alert.alert('Ops... Something went wrong!',err + 'Your order processed successfully, though the confirmation email cannot be sent at the moment. You can check your order in the "Orders" section. Sorry for the inconvenience',[{text:'OK'}])
+				}
+				else {
+					dispatch(clearCart());
+					setIsLoading(false);
+					props.navigation.dispatch(StackActions.popToTop());
+					props.navigation.navigate("Orders");
+					console.log(data);
+				}
+			});
+		});
 	};
+
 	const placeOrder = React.useCallback(async () => {
 		///check the address List
-	
 
 		if (addressInfo.length !== 0) {
 			setSelectAddressModal(true);
 		}
+
 		if (addressInfo.length === 0) {
 			Alert.alert(
 				"You need to add a new address",
@@ -69,22 +125,16 @@ const CartScreen = (props) => {
 				[
 					{
 						text: "OK",
-						onPress: () =>
+						onPress: () => {
 							props.navigation.navigate("profile", {
 								screen: "address-screen",
-							}),
+							});
+						},
 					},
 				]
 			);
 		}
-
-		// setIsLoading(true);
-		// await dispatch(addOrder(item, totalAmount));
-		// dispatch(clearCart());
-		// setIsLoading(false);
-		// props.navigation.dispatch(StackActions.popToTop());
-		// props.navigation.navigate("Orders");
-	}, [dispatch, isLoading,addressInfo]);
+	}, [addressInfo]);
 
 	React.useEffect(() => {
 		fetchAddressList();
@@ -129,11 +179,16 @@ const CartScreen = (props) => {
 					Total: $<Text style={styles.price}>{totalAmount.toFixed(2)}</Text>
 				</Text>
 				{isLoading ? (
-					<AnimatedDots
-						circleSize={9}
-						marginSize={1.5}
-						container={styles.button}
-					/>
+					
+						<AnimatedDots
+							circleSize={15}
+							marginSize={2.5}
+							container={{
+								...styles.animatedDotsStyle,
+								backgroundColor: "transparent",
+							}}
+						/>
+					
 				) : (
 					<TouchableOpacity
 						style={styles.button}
@@ -232,5 +287,13 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	animatedDotsStyle:{
+		height: Dimensions.get("screen").height / 20,
+		width: Dimensions.get("screen").width - 40,
+		maxWidth: Dimensions.get("screen").width,
+		paddingVertical: 10,
+		marginVertical: 2,
+		borderRadius: 10,
+	}
 });
 export default CartScreen;

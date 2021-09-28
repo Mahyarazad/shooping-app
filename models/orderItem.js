@@ -1,9 +1,11 @@
 class Order {
-	constructor(id, items, amount, date) {
+	constructor(id, items, amount, date, address) {
 		(this.id = id),
 			(this.items = items),
 			(this.amount = amount),
 			(this.date = date);
+			this.address = address
+
 	}
 
 	get readableDate() {

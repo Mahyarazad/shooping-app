@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+// import axios from "axios";
 export const SIGN_UP = "SIGN_UP";
 export const LOGIN = "LOGIN";
 export const LOGOUT = "LOGOUT";

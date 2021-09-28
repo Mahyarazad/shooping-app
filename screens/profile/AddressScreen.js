@@ -69,7 +69,9 @@ const AddressScreen = (props) => {
 			<AddressFlatList 
 				iconName='close-outline'
 				addressData={addressList} 
+				addressJS={()=>{}}
 				addressID={handleDelete} />
+				
 		</View>
 	);
 };

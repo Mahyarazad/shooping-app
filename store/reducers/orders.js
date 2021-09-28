@@ -18,7 +18,8 @@ const orderReducer = (state = initialState, action) => {
 				uuidv4(),
 				action.orderData.items,
 				action.orderData.amount,
-				new Date()
+				new Date(),
+				action.orderData.address
 			);
 			state.orders = state.orders.concat(newOrder);
 			return state;

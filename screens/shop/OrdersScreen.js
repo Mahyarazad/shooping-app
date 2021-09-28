@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet,FlatList } from "react-native";
+import { View, Text, StyleSheet,FlatList,Dimensions } from "react-native";
 import { useSelector } from "react-redux";
 import OrderCard from "../../components/shop/OrderCard";
 import { useDispatch } from "react-redux";
 import * as orderActions from "../../store/actions/orders";
-import { ActivityIndicator } from "react-native";
 import Colors from "../../constants/Colors";
 import AnimatedView from "../../components/UI/AnimatedView";
+import AnimatedDots from "../../components/UI/AnimatedDots";
 
 const OrdersScreen = (props) => {
 	const orderData = useSelector((state) => state.order.orders);
@@ -43,7 +43,14 @@ const OrdersScreen = (props) => {
 	if (isLoading) {
 		return (
 			<AnimatedView style={styles.centered}>
-				<ActivityIndicator size="large" color={Colors.primary} />
+				<AnimatedDots
+							circleSize ={30}
+							marginSize = {5}
+							container={{
+								...styles.animatedDotsStyle,
+								backgroundColor: "transparent",
+							}}
+						/>
 			</AnimatedView>
 		);
 	}
@@ -87,5 +94,13 @@ const styles = StyleSheet.create({
 		fontSize: 28,
 		paddingBottom: 10,
 	},
+	animatedDotsStyle:{
+		height: Dimensions.get("screen").height / 20,
+		width: Dimensions.get("screen").width - 40,
+		maxWidth: Dimensions.get("screen").width,
+		paddingVertical: 10,
+		marginVertical: 2,
+		borderRadius: 10,
+	}
 });
 export default OrdersScreen;

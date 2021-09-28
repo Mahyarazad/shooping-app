@@ -6,26 +6,25 @@ import { removeOrder } from "../../store/actions/orders";
 import Card from "../UI/Card";
 
 const OrderCard = (props) => {
-	
+	console.log(props)
 	const orderDetail = Object.values(props.orderItem.items);
 	const [showDetails, setShowDetails] = React.useState(false);
 	const [notify, setNotify] = React.useState(false);
-
 	const dispatch = useDispatch();
 
 	React.useEffect(() => {
 		if (notify) {
-			return Alert.alert("Warning", "Are you sure?", [
-				{
-					text: "Yes",
-					onPress: () => {
-						dispatch(removeOrder(props.id));
-					},
-				},
+			return Alert.alert("Warning", "Are you sure you want to delete this item?", [
 				{
 					text: "No",
 					onPress: () => {
 						setNotify(false);
+					},
+				},
+				{
+					text: "Yes",
+					onPress: () => {
+						dispatch(removeOrder(props.id));
 					},
 				},
 			]);
@@ -34,10 +33,24 @@ const OrderCard = (props) => {
 
 	return (
 		<Card style={styles.itemContainer}>
-			<View style={styles.order}>
+			<View style={styles.rowStyle}>
+				<Text style={{...styles.amount, fontFamily: "open-sans-bold"}}>Order ID: </Text>
+				<Text style={{...styles.amount, fontFamily: "open-sans"}}>{props.orderItem.id} </Text>
+			</View>
+			<View style={styles.rowStyle}>
+				<Text style={{...styles.amount, fontFamily: "open-sans-bold"}}>Total Amount:</Text>
 				<Text style={styles.amount}>${props.orderItem.amount.toFixed(2)} </Text>
+			</View>
+			<View style={styles.rowStyle}>
+			<Text style={{...styles.amount, fontFamily: "open-sans-bold"}}>Purchase Date:</Text>
 				<Text style={styles.date}> {props.date}</Text>
 			</View>
+			<View style={{...styles.orderLine, borderBottomColor: 'gray'}}></View>
+			<View style={{justifyContent: 'space-between',  paddingLeft: 5}}>
+				<Text style={{...styles.amount, fontFamily: "open-sans-bold"}}>Delivery Address: </Text>
+				<Text style={{...styles.amount, fontFamily: "open-sans"}}>{props.orderItem.address} </Text>
+			</View>
+			<View style={{...styles.orderLine, borderBottomColor: 'gray'}}></View>
 			<View style={styles.button}>
 				<TouchableOpacity
 					onPress={() => {
@@ -45,8 +58,7 @@ const OrderCard = (props) => {
 					}}
 				>
 					<Text style={styles.openDetail}>
-						{" "}
-						{showDetails ? "Hide Details" : "Details"}{" "}
+						{showDetails ? "Hide Details" : "Details"}
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -54,7 +66,7 @@ const OrderCard = (props) => {
 						setNotify(true);
 					}}
 				>
-					<Text style={{ fontFamily: "open-sans", color: "black" }}>
+					<Text style={{ fontFamily: "open-sans-bold", color: Colors.primary, fontSize:18}}>
 						Delete
 					</Text>
 				</TouchableOpacity>
@@ -65,30 +77,37 @@ const OrderCard = (props) => {
 						{orderDetail.map((e) => {
 							return (
 								<View style={styles.detailContainer} key={Math.random()}>
-									<Text style={{ width: "70%", fontFamily: "open-sans" }}>
-										{" "}
-										{e.productTitle}{" "}
+									<Text style={{ width: "70%", fontFamily: "open-sans", fontSize: 16 }}>
+										{e.productTitle}
 									</Text>
-									<Text style={{ width: "15%", fontFamily: "open-sans" }}>
-										{" "}
-										×{e.quantity}{" "}
+									<Text style={{ width: "15%", fontFamily: "open-sans", fontSize: 16 }}>
+										×{e.quantity}
 									</Text>
-									<Text style={{ width: "15%", fontFamily: "open-sans" }}>
-										{" "}
+									<Text style={{ width: "15%", fontFamily: "open-sans", fontSize: 16 }}>
 										${e.sum / 1000 > 1
 											? e.sum.toFixed(0)
-											: e.sum.toFixed(2)}{" "}
+											: e.sum.toFixed(2)}
 									</Text>
 								</View>
 							);
 						})}
+						<View style={styles.orderLine}></View>
+						<View style={styles.order}>
+							<Text style={{...styles.amount, fontFamily: "open-sans-bold"}}>Total Amount: </Text>
+							<Text style={{...styles.amount, fontFamily: "open-sans"}}> ${props.orderItem.amount / 1000 > 1
+											? props.orderItem.amount.toFixed(0)
+											: props.orderItem.amount.toFixed(2)} </Text>
+						</View>
+						
 					</View>
+					
 				)}
 			</View>
 		</Card>
 	);
 };
 
+const _fontSize = 19
 const styles = StyleSheet.create({
 	itemContainer: {
 		marginHorizontal: 20,
@@ -99,32 +118,44 @@ const styles = StyleSheet.create({
 	},
 	date: {
 		fontFamily: "open-sans",
-		color: "gray",
-		fontSize: 16,
+		color: "black",
+		fontSize: _fontSize,
 	},
 	amount: {
 		fontFamily: "open-sans-bold",
-		fontSize: 16,
+		fontSize: _fontSize,
 		color: "black",
 	},
 
 	openDetail: {
-		fontFamily: "open-sans",
-		fontSize: 18,
+		fontFamily: "open-sans-bold",
+		fontSize: _fontSize,
 		color: Colors.primary,
 	},
 	detailContainer: {
 		flexDirection: "row",
 		marginVertical: 5,
+		paddingHorizontal: 5
 	},
 	order: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		marginHorizontal: 5,
+		paddingTop: 5
 	},
 	button: {
-		alignItems: "center",
+		flexDirection:'row',
+		justifyContent: "space-between",
 		marginVertical: 5,
+		paddingHorizontal: 5
 	},
+	rowStyle:{flexDirection: 'row', justifyContent: 'space-between',  paddingHorizontal: 5},
+	orderLine:{
+		borderBottomColor:Colors.primary,
+		borderBottomWidth: 1,
+		marginHorizontal: 5,
+		paddingTop: 5
+
+	}
 });
 export default OrderCard;
