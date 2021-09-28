@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 	productCard: {
 		flex: 1,
 		overflow: "hidden",
-		marginVertical: 10,
+		marginVertical:7.5,
 		marginHorizontal: 10,
 	},
 	screen: {

@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 	itemContainer: {
 		
 		marginHorizontal: 20,
-		marginVertical: 2,
+		marginVertical: 5,
 		paddingVertical: 10,
 		paddingHorizontal: 5,
 		flexDirection: "row",

@@ -64,8 +64,9 @@ const OrdersScreen = (props) => {
 	}
 
 	return (
-		<View>
+		<View style={{marginTop:7.5, marginBottom: 7.5}}>
 			<FlatList
+				maxToRenderPerBatch={10}
 				onRefresh={loadOrder}
 				refreshing={isRefreshing}
 				data={orderData}

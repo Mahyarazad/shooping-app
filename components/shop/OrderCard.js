@@ -6,7 +6,7 @@ import { removeOrder } from "../../store/actions/orders";
 import Card from "../UI/Card";
 
 const OrderCard = (props) => {
-	console.log(props)
+
 	const orderDetail = Object.values(props.orderItem.items);
 	const [showDetails, setShowDetails] = React.useState(false);
 	const [notify, setNotify] = React.useState(false);
@@ -107,11 +107,11 @@ const OrderCard = (props) => {
 	);
 };
 
-const _fontSize = 19
+const _fontSize = 18
 const styles = StyleSheet.create({
 	itemContainer: {
 		marginHorizontal: 20,
-		marginVertical: 5,
+		marginVertical: 7.5,
 		paddingVertical: 10,
 		paddingHorizontal: 5,
 		alignItems: "stretch",

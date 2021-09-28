@@ -113,6 +113,7 @@ const ProductOverviewScreen = (props) => {
 			) : (
 				<></>
 			)}
+			<View style={{marginTop: 7.5, marginBottom: 7.5}}>
 			<FlatList
 				data={products}
 				onRefresh={loadProducts}
@@ -173,6 +174,7 @@ const ProductOverviewScreen = (props) => {
 
 				// numColumns={2}
 			/>
+			</View>
 		</View>
 	);
 };
