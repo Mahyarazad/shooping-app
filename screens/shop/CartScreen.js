@@ -64,18 +64,18 @@ const CartScreen = (props) => {
 	});
 
 	const addressJs = async (object) => {
-		console.log(item[0].sum)
 		setIsLoading(true);
 		setSelectAddressModal(false);
 
 		let itemHTML = "";
 		let totalitemHTML = "";
 		let itemQuantity = 0;
+
 		item.map((e) => {
 			itemQuantity += e.quantity
 			itemHTML += `<tr><td">${e.productTitle}</td><td>${e.productPrice}</td><td>${e.quantity}</td><td>${e.sum}</td></tr>`;
 		});
-		totalitemHTML = `<tr><td">Total Amount</td><td></td><td>${itemQuantity}</td><td>${item[0].sum}</td></tr>`;
+		totalitemHTML = `<tr><td"><b>Total Amount</b></td><td></td><td><b>${itemQuantity}</b></td><td><b>${totalAmount}</b></td></tr>`;
 		dispatch(addOrder(item, totalAmount, object["address"])).then((resData) => {
 			const { orderData } = resData;
 
@@ -88,7 +88,7 @@ const CartScreen = (props) => {
 					Body: {
 						Html: {
 							Charset: "UTF-8",
-							Data:`<!DOCTYPE html><html> <head> <link href="https://fonts.googleapis.com/css2?family=Glory:wght@100&display=swap" rel="stylesheet"> <style>.container{font-family: 'Glory', sans-serif; height: 100%; display:grid; grid-template-columns: 0.4fr ; grid-template-rows: 0.5fr 0.35fr 1fr; grid-template-areas: "header" "order-container" "table-container";}.header{grid-area: header; grid-row-start:1 ; grid-column: 1; place-self: center;}.order-container{grid-area: orderDetail; grid-row-start:2 ; grid-column: 1; align-self: start;}.table-container{grid-area: table-container; grid-row-start:3 ; grid-column: 1; overflow: hidden; align-self: start;}.image{}p.bigger{margin-bottom: 0; font-size: 3.5em; text-align: center;}p.smaller{text-align: center; font-size: 2em;}p.text{font-size: 1.5em; text-align: center;}table{width: 100%; font-size: 1em; border:0.1em solid black; border-radius: 0.2em;}tr{text-align: center; border:0.1em solid black;}th{font-size: 1em;}</style> </head> <body> <div class="container"> <div class="header"> <p class="bigger"> <b>Your order placed</b> </p><p class="smaller"> <b>Thanks for your purchase</b></p><img class="image" src="https://cdn2.tychesoftwares.com/wp-content/uploads/2018/03/14061445/Reduce-Shopping-Cart-Abandonment.png" alt="featured-thumbnail"/> </div><div class="order-container"> <p class="text"> <b> Order ID: </b>${orderData.id}</p><p class="text"><b> Delivery Address: </b>${object['address']}</p><p class="text" style="margin-bottom: 1em;"> <b> Total Amount: $</b>${orderData.amount.toFixed(2)}</p></div><div class="table-container"> <table cellspacing="0"> <tr> <th> Product Name</th> <th> Unit Price </th> <th> Quantity </th> <th> Total</th> </tr>${itemHTML}${totalitemHTML}</table> </div></div></body></html>`,
+							Data:`<!DOCTYPE html><html> <head> <link href="https://fonts.googleapis.com/css2?family=Glory:wght@100&display=swap" rel="stylesheet"> <style>.container{font-family: 'Glory', sans-serif; height: 100%; display:grid; grid-template-columns: 0.4fr ; grid-template-rows: 0.5fr 0.35fr 1fr; grid-template-areas: "header" "order-container" "table-container";}.header{grid-area: header; grid-row-start:1 ; grid-column: 1; place-self: center;}.order-container{grid-area: orderDetail; grid-row-start:2 ; grid-column: 1; align-self: start;}.table-container{grid-area: table-container; grid-row-start:3 ; grid-column: 1; overflow: hidden; align-self: start;}.image{}p.bigger{margin-bottom: 0; font-size: 3.5em; text-align: center;}p.smaller{text-align: center; font-size: 2em;}p.text{font-size: 1.5em; text-align: center;}table{width: 100%; font-size: 1em; border:0.1em solid black; border-radius: 0.2em;}tr{text-align: center; border:0.1em solid black;}th{font-size: 1em;}</style> </head> <body> <div class="container"> <div class="header"> <p class="bigger"> <b>Your order placed</b> </p><p class="smaller"> <b>Thanks for your purchase</b></p><img class="image" src="https://cdn2.tychesoftwares.com/wp-content/uploads/2018/03/14061445/Reduce-Shopping-Cart-Abandonment.png" alt="featured-thumbnail"/> </div><div class="order-container"> <p class="text"> <b> Order ID: </b>${orderData.id}</p><p class="text"><b> Delivery Address: </b>${object['address']}</p><p class="text" style="margin-bottom: 1em;"> <b> Total Amount: $</b><b>${orderData.amount.toFixed(2)}</b></p></div><div class="table-container"> <table cellspacing="0"> <tr> <th> Product Name</th> <th> Unit Price </th> <th> Quantity </th> <th> Total</th> </tr>${itemHTML}${totalitemHTML}</table> </div></div></body></html>`,
 						},
 					},
 
