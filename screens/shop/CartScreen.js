@@ -23,12 +23,13 @@ import Card from "../../components/UI/Card";
 import AnimatedDots from "../../components/UI/AnimatedDots";
 import * as addressActions from "../../store/actions/userInfo";
 import AddressFlatList from "../../components/UI/AddressFlatList";
-
+import ENV from '../../ENV'
 var AWS = require("aws-sdk");
+
 AWS.config.update({
-	accessKeyId: "AKIA6F2RW7IPKGEDESK6",
-	secretAccessKey: "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",
-	region: "eu-central-1",
+	accessKeyId: ENV.accessKeyId,
+	secretAccessKey: ENV.secretAccessKey,
+	region: ENV.region,
 });
 
 const ses = new AWS.SES({ apiVersion: "2010-12-01" });
